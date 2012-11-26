@@ -40,9 +40,9 @@ public class ServerThread extends Thread {
             out.println("Problem with In or Output - Connection.");
         }
 
-        //socket übergeben + udp port
     }
 
+    @Override
     public void run() {
 
         String inputLine, outputLine;
