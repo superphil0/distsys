@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
+package Common;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -11,8 +11,8 @@ import java.rmi.RemoteException;
  *
  * @author daniela
  */
-public interface IUnsubscribe extends Remote{
+public interface ISubscribe extends Remote{
     
-    public void unsubscribe(String sID) throws RemoteException;
+    public String subscribe(String filter, IManagementClientCallback callbackObject) throws RemoteException;
     
 }

@@ -11,18 +11,18 @@ import java.util.UUID;
  * @author daniela
  */
 public abstract class Event {
-    private String ID;
+    private String id;
     private String type;
     private long timestamp;
     
     public Event(String type, long timestamp){
-        ID = UUID.randomUUID().toString();
+        id = UUID.randomUUID().toString();
         this.type = type;
         this.timestamp = timestamp;
     }
 
     public String getID() {
-        return ID;
+        return id;
     }
 
     public String getType() {
