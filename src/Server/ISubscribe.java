@@ -13,6 +13,6 @@ import java.rmi.RemoteException;
  */
 public interface ISubscribe extends Remote{
     
-    public String subscribe(String filter);
+    public String subscribe(String filter) throws RemoteException;
     
 }
