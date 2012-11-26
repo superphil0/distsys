@@ -13,8 +13,10 @@ import Common.IManagementClientCallback;
 import Common.IProcessEvent;
 import Common.ISubscribe;
 import Common.IUnsubscribe;
+import Server.RMIRegistry;
 import java.rmi.Remote;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -26,13 +28,26 @@ import java.util.logging.Logger;
  */
 public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe {
 
-    private ExecutorService execute;
+    //ThreadPool
+    private ExecutorService executer;
+    //Port from the RMI-Registry
     private int port = RegistryProperties.getPort();
     private Registry rmiRegistry;
+    //Remote Object of this Server to export
     private Remote remoteAnalyticsServer;
+    //Name of this Server in the rmiRegistry - from the properties file
     private String bindingName;
+    //List with all subscriptions containing String ID + SubscriptionObject
     private HashMap<String, Subscription> subscriptions = new HashMap<String, Subscription>();
+    
+    private static long serverStarttime = new Date().getTime();
 
+    /**
+     * starts a AnalyticsServer as Thread
+     *
+     * @param args should contain bindingName
+     * @throws RemoteException
+     */
     public static void main(String[] args) throws RemoteException {
         AnalyticsServer server = new AnalyticsServer();
         if (args.length == 1) {
@@ -44,24 +59,29 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
 
     }
 
+    /**
+     * adds a Task to the ThreadPool
+     *
+     * @param task
+     */
     public void addTask(Runnable task) {
-        execute.execute(task);
+        executer.execute(task);
     }
 
     public void start() {
-        try {
-            rmiRegistry = LocateRegistry.createRegistry(port);
-            remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
-        } catch (RemoteException ex) {
-            Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //get RMI Registry, if it doesn't exist - create it
+        //try {
+        //    rmiRegistry = LocateRegistry.getRegistry(port);
+        //} catch (RemoteException rex) {
+            try {
+                remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
+                RMIRegistry.getRmiRegistry().rebind(bindingName, remoteAnalyticsServer);
+                //rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
 
-        try {
-            rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
-        } catch (RemoteException ex) {
-            Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+            } catch (RemoteException ex) {
+                Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        //}
     }
 
     public void setBindingName(String bindingName) {
@@ -79,12 +99,13 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
 
     public void processEvent(Event event) throws RemoteException {
         //TODO calculate statistics
+        //if event !instanceof StatisticsEvent
 
 
-        for (Subscription sub : subscriptions.values()) {
-            sub.sendEvent(event);
+        //send Event to all subscribers, they decide whether they need it or not
+        for (Subscription subscription : subscriptions.values()) {
+            subscription.sendEvent(event);
         }
-
 
     }
 
@@ -92,5 +113,9 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
         if (subscriptions.containsKey(id)) {
             subscriptions.remove(id);
         }
+    }
+    
+    public long getStarttime() {
+        return serverStarttime;
     }
 }
