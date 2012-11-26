@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
-import Server.BillingServerSecure;
+import Server.BillingServer.BillingServerSecure;
 
 class ManageUser
 {

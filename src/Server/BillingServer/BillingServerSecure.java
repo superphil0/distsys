@@ -1,10 +1,12 @@
-package Server;
+package Server.BillingServer;
 
 import java.rmi.Remote;
+
 
 public class BillingServerSecure implements Remote{
 	PriceSteps getPriceSteps()
 	{
+		return null;
 		
 	}
 	void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent)
@@ -21,6 +23,7 @@ public class BillingServerSecure implements Remote{
 	}
 	Bill getBill(String user)
 	{
+		return null;
 		
 	}
 

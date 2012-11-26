@@ -37,7 +37,7 @@ public class CalculateStatistics implements Runnable {
             } else if(event instanceof BidEvent) {
                 
             } else if(event instanceof UserEvent) {
-                server.processEvent(new StatisticsEvent("BID_PRICE_MAX", new Date().getTime(), 4000));
+               // server.processEvent(new StatisticsEvent("BID_PRICE_MAX", new Date().getTime(), 4000));
             } else {
                 //e.g. StatisticsEvent
             }
@@ -46,5 +46,5 @@ public class CalculateStatistics implements Runnable {
     }
     
     
-    
+    }
 }
