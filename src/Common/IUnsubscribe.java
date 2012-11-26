@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
+package Common;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,6 +13,6 @@ import java.rmi.RemoteException;
  */
 public interface IUnsubscribe extends Remote{
     
-    public void unsubscribe(String sID) throws RemoteException;
+    public void unsubscribe(String id) throws RemoteException;
     
 }
