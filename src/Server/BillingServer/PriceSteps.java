@@ -47,5 +47,17 @@ public class PriceSteps {
 		return ret;		
 	}
 	
+	public PriceStep getPriceStep(double price)
+	{
+		for(PriceStep p : priceSteps)
+		{
+			if(price >= p.getStartPrice() && price < p.getEndPrice())
+			{
+				return p;			
+			}
+		}
+		return null;
+	}
+	
 	
 }

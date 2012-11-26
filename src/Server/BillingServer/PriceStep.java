@@ -57,6 +57,10 @@ public class PriceStep implements Comparable<PriceStep>{
 		return true;
 	}
 	
+	public double getVariableAmount(double price)
+	{
+		return price*(variablePrice/100);
+	}
 	
 	
 	@Override
