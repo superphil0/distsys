@@ -7,6 +7,7 @@ package User;
 import Server.ServerThread;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,50 +19,44 @@ public class User {
     private static final int LOGGED_OUT = 0;
     private static final int LOGGED_IN = 1;
     private int state = LOGGED_OUT;
+    //private long loginTimestamp, logoutTimestamp;
     private ServerThread serverThread;
     
-    String username;
-    //outstanding notifications
-    List<String> notifications;
-    //TODO User adress
+    private String username;
+    //outstanding udp notifications
+    //List<String> notifications;
     
 
     public User (String username) {
         this.username = username;
-        notifications = Collections.synchronizedList(new ArrayList<String>());
+        //notifications = Collections.synchronizedList(new ArrayList<String>());
     }
     
     /**
-     * @param dsocket - current User-Address
-     * @return true: logged in successfully.
-     *         false: user is already logged in.
+     * @param serverThread - current Thread which is communication with the client
      */
     public synchronized void login(ServerThread serverThread) {
-       // if(state == LOGGED_OUT) {
             state = LOGGED_IN;
             this.serverThread = serverThread;
-            if(!notifications.isEmpty()) {
+            /*if(!notifications.isEmpty()) {
                 for(int i = 0; i < notifications.size(); i++) {
                     sendToUser(notifications.get(i));
                     notifications.remove(i);
                 }
-                /*
-                for(String notification: notifications.size()) {
-                    sendToUser(notification);
-                    notifications.remove(notification);
-                }*/
-            }
-        //} else {
-            //already logged in
-        //}
+            }*/
+            //loginTimestamp = new Date().getTime();
+            //logoutTimestamp = 0;
     }
     
     public void logout() {
         state = LOGGED_OUT;
         serverThread = null;
+        //logoutTimestamp = new Date().getTime();
+        
+        //TODO EVENT!
     }
     
-    public void receiveNotification(String notification) {
+    /*public void receiveNotification(String notification) {
         if(state == LOGGED_IN && serverThread != null) {
             sendToUser(notification);
         }
@@ -77,7 +72,7 @@ public class User {
     private void sendToUser(String notification) {
         //TODO send messages via ServerThread
         serverThread.sendNotification(notification);
-    }
+    } */
     
     public Boolean isLoggedIn(){
         if(state == LOGGED_IN) {
@@ -90,5 +85,9 @@ public class User {
     public String getUsername() {
         return username;
     }
+    
+    /*private long getSessionTime() {
+        return logoutTimestamp - loginTimestamp;
+    }*/
         
 }
