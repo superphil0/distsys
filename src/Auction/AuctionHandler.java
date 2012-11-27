@@ -36,15 +36,15 @@ public class AuctionHandler {
 
         if (a.getHighestBidder() != null) {
             bidder = a.getHighestBidder().getUsername();
-            a.getHighestBidder().receiveNotification(end + " You won with " + a.getHighestBid());
+            //a.getHighestBidder().receiveNotification(end + " You won with " + a.getHighestBid());
         }
         //notify owner
-        a.getOwner().receiveNotification(end + bidder + " has won with " + a.getHighestBid());
+        //a.getOwner().receiveNotification(end + bidder + " has won with " + a.getHighestBid());
 
         auctionList.remove(a.getId());
     }
 
-    public boolean bid(User bidder, int id, double amount) {
+    public synchronized boolean bid(User bidder, int id, double amount) {
         if (auctionList.containsKey(id)) {
             return getAuction(id).bid(bidder, amount);
         } else {
@@ -69,25 +69,4 @@ public class AuctionHandler {
     public Auction getAuction(int id) {
         return auctionList.get(id);
     }
-    /*
-     public HashMap<Integer, Auction> getEndedAuctions() {
-     for (Auction a : auctionList.values()) {
-     if (a.hasEnded()) {
-     auctionList.remove(a);
-     endedAuctions.put(a.getId(), a);
-     }
-     }
-     return endedAuctions;
-     }
-
-     public HashMap<Integer, Auction> getAuctionsByOwner(User owner) {
-     HashMap<Integer, Auction> privList = new HashMap<Integer, Auction>();
-     for (Auction a : auctionList.values()) {
-     if (a.getOwner().getUsername().equals(owner.getUsername()) && !a.hasEnded()) {
-     privList.put(a.getId(), a);
-     }
-     }
-     return privList;
-     }
-     */
 }
