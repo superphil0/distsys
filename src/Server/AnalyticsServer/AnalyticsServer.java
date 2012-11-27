@@ -55,7 +55,6 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
         } else {
             System.err.println("Invalid Arguments.");
         }
-
     }
 
     /**
