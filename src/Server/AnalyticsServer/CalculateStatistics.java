@@ -48,6 +48,18 @@ public class CalculateStatistics implements Runnable {
 
         if (event != null) {
             if (event instanceof AuctionEvent) {
+                AuctionEvent auctionEvent = (AuctionEvent) event;
+                
+                if(auctionEvent.getType().equals("AUCTION_STARTED")) {
+                    auctionList.put(auctionEvent.getAuctionID(), auctionEvent.getTimestamp());
+                    auctionCounter++;
+                    
+                } else if(auctionEvent.getType().equals("AUCTION_ENDED")) {
+                    
+                } else {
+                    //invalid type
+                } 
+                
             } else if (event instanceof BidEvent) {
                 BidEvent bidEvent = (BidEvent) event;
 
@@ -68,11 +80,11 @@ public class CalculateStatistics implements Runnable {
                         if(!successfulAuctionList.containsKey(bidEvent.getAuctionID())){
                             successfulAuctions++;
                             successfulAuctionList.put(bidEvent.getAuctionID(), bidEvent.getAuctionID());
-                            double auctionSuccessRatio = successfulAuctions/auctionCounter;
+                            double auctionSuccessRatio = ((double)successfulAuctions)/((double)auctionCounter);
                             server.processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", new Date().getTime(), auctionSuccessRatio));
                         } 
 
-                    //} else if (bidEvent.getType().equals("BID_WON")) {
+                    //} else if (bidEvent.getType().equals("BID_WON")) { //no statistic to calculate
                     } else {
                         //invalid type
                     }
