@@ -3,8 +3,10 @@ package Server.BillingServer;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import Common.IBillingSecure;
 
-public class BillingServerSecure implements Remote{
+
+public class BillingServerSecure implements IBillingSecure{
 	
 	private PriceSteps priceSteps;
 	private Bills bills;
@@ -12,13 +14,13 @@ public class BillingServerSecure implements Remote{
 		priceSteps = new PriceSteps();
 		bills = new Bills(priceSteps);
 	}
-	PriceSteps getPriceSteps()
+	public PriceSteps getPriceSteps()
 	{
 		return priceSteps;
 		
 	}
 	 
-	void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException
+	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException
 	{
 		PriceStep step = new PriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 		if(!priceSteps.addPriceStep(step))
@@ -27,7 +29,7 @@ public class BillingServerSecure implements Remote{
 		}
 	}
 	
-	void deletePriceStep(double startPrice, double endPrice) throws RemoteException
+	public void deletePriceStep(double startPrice, double endPrice) throws RemoteException
 	{
 		if(!priceSteps.deletePriceStep(new PriceStep(startPrice, endPrice, 1, 1)))
 		{
@@ -36,11 +38,11 @@ public class BillingServerSecure implements Remote{
 	}
 	
 	
-	void billAuction(String user, long auctionID, double price)
+	public void billAuction(String user, long auctionID, double price)
 	{
 		bills.storeBill(user, auctionID, price);
 	}
-	Bill getBill(String user) throws RemoteException
+	public Bill getBill(String user) throws RemoteException
 	{
 		Bill b = bills.getBill(user);
 		if(b == null)

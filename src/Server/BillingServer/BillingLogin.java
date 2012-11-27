@@ -9,7 +9,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 
-import rmi.IBillingLogin;
+import Common.IBillingLogin;
+
 
 class ManageUser
 {
