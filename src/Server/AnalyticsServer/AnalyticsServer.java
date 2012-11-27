@@ -4,6 +4,7 @@
  */
 package Server.AnalyticsServer;
 
+import Common.IAnalytics;
 import Events.Event;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -12,7 +13,10 @@ import Common.IManagementClientCallback;
 import Common.IProcessEvent;
 import Common.ISubscribe;
 import Common.IUnsubscribe;
-import Server.RMIRegistry;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -26,12 +30,13 @@ import java.util.logging.Logger;
  *
  * @author daniela
  */
-public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe {
+public class AnalyticsServer implements IAnalytics {
 
     //ThreadPool
     private ExecutorService executer;
     //Port from the RMI-Registry
     private int port = RegistryProperties.getPort();
+    private String host = RegistryProperties.getHost();
     private Registry rmiRegistry;
     //Remote Object of this Server to export
     private Remote remoteAnalyticsServer;
@@ -48,6 +53,7 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
      * @throws RemoteException
      */
     public static void main(String[] args) throws RemoteException {
+        RegistryProperties r = new RegistryProperties();
         AnalyticsServer server = new AnalyticsServer();
         if (args.length == 1) {
             server.setBindingName(args[0]);
@@ -67,16 +73,18 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
     }
 
     public void start() {
-   
-        rmiRegistry = RMIRegistry.getRmiRegistry();
         try {
             remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
+            rmiRegistry = LocateRegistry.createRegistry(port);
             rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
+            System.out.println("registry created: host " + host + " port " + port);
 
         } catch (RemoteException ex) {
             Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+          
     }
+
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }

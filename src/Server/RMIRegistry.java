@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- */
+ *
 package Server;
 
 import PropertyReader.RegistryProperties;
@@ -14,19 +14,21 @@ import java.util.logging.Logger;
 /**
  *
  * @author daniela
- */
+ *
 public class RMIRegistry {
 
     private static int port = RegistryProperties.getPort();
     private static Registry rmiRegistry = null;
 
-    public synchronized static Registry getRmiRegistry() {
+    public synchronized static Registry getRmiRegistry() throws RemoteException {
 
         //creates RMI Registry, if it already exist - get it
         if(rmiRegistry == null) {
             createRegistry();
+            System.out.println("creatin Registry");
         }
         return rmiRegistry;
+        //return LocateRegistry.getRegistry(port);
     }
 
     private static void createRegistry() {
@@ -36,4 +38,4 @@ public class RMIRegistry {
             Logger.getLogger(RMIRegistry.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-}
+} */
