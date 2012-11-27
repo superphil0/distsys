@@ -6,7 +6,6 @@ package Server.AnalyticsServer;
 
 import Events.Event;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import PropertyReader.RegistryProperties;
 import Common.IManagementClientCallback;
@@ -15,6 +14,7 @@ import Common.ISubscribe;
 import Common.IUnsubscribe;
 import Server.RMIRegistry;
 import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +39,6 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
     private String bindingName;
     //List with all subscriptions containing String ID + SubscriptionObject
     private HashMap<String, Subscription> subscriptions = new HashMap<String, Subscription>();
-    
     private static long serverStarttime = new Date().getTime();
 
     /**
@@ -51,8 +50,8 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
     public static void main(String[] args) throws RemoteException {
         AnalyticsServer server = new AnalyticsServer();
         if (args.length == 1) {
-            server.start();
             server.setBindingName(args[0]);
+            server.start();
         } else {
             System.err.println("Invalid Arguments.");
         }
@@ -69,21 +68,16 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
     }
 
     public void start() {
-        //get RMI Registry, if it doesn't exist - create it
-        //try {
-        //    rmiRegistry = LocateRegistry.getRegistry(port);
-        //} catch (RemoteException rex) {
-            try {
-                remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
-                RMIRegistry.getRmiRegistry().rebind(bindingName, remoteAnalyticsServer);
-                //rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
+   
+        rmiRegistry = RMIRegistry.getRmiRegistry();
+        try {
+            remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
+            rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
 
-            } catch (RemoteException ex) {
-                Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        //}
+        } catch (RemoteException ex) {
+            Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }
@@ -114,7 +108,7 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
             subscriptions.remove(id);
         }
     }
-    
+
     public long getStarttime() {
         return serverStarttime;
     }
