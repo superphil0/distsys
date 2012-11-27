@@ -14,6 +14,7 @@ import Server.AnalyticsServer.AnalyticsServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -39,6 +40,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
     private IAnalytics analyticsService;
         private int port = RegistryProperties.getPort();
         private String host = RegistryProperties.getHost();
+        private MClientOutput mct;
 
 
     public static void main(String[] args) throws RemoteException {
@@ -74,11 +76,14 @@ public class ManagementClient implements IManagementClientCallback, Serializable
             
             //TEST
             System.out.println(analyticsService.subscribe("blubb", this));
-            System.out.println(analyticsService.subscribe("blubb", this));
+            /*System.out.println(analyticsService.subscribe("blubb", this));
             System.out.println(analyticsService.subscribe("blubb", this));
             System.out.println(analyticsService.subscribe("blubb", this));
             
+            analyticsService.unsubscribe("1");
+            analyticsService.unsubscribe("2");
             
+            */
             
             
         } catch (AccessException ex) {
@@ -102,6 +107,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
         try {
             //reading UserInput
             while ((fromUser = stdIn.readLine()) != null) {
+
                 if (fromUser.startsWith("!login") || fromUser.startsWith("!steps") || fromUser.startsWith("!addStep") || fromUser.startsWith("!removeStep") || fromUser.startsWith("!bill") || fromUser.startsWith("!logout")) {
                     //talk to billing server
                     if (billingService == null) {
@@ -144,7 +150,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
                             input = fromUser.split(" ");
                             if (input.length == 2) {
                                 try {
-                                    billingService.getBill(input[1]);
+                                    System.out.append(billingService.getBill(input[1]).toString());
                                 } catch (NumberFormatException ex) {
                                     System.out.println("Usage: !bill <userName>");
                                 }
@@ -161,7 +167,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
                     if (fromUser.startsWith("!subscribe")) {
                         input = fromUser.split(" ");
                         if (input.length == 2) {
-                            analyticsService.subscribe(input[1], this);
+                            //System.out.println(analyticsService.subscribe(input[1], this));
                         } else {
                             System.out.println("Usage: !subscribe <filterRegex>");
                         }
@@ -169,6 +175,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
                         input = fromUser.split(" ");
                         if (input.length == 2) {
                             analyticsService.unsubscribe(input[1]);
+                            System.out.println("subscription " + input[1] + " terminated");
                         } else {
                             System.out.println("Usage: !unsubscribe <id>");
                         }

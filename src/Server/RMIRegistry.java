@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- */
+ *
 package Server;
 
 import PropertyReader.RegistryProperties;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author daniela
- */
+ *
 public class RMIRegistry {
 
     private static int port;
@@ -42,3 +42,4 @@ public class RMIRegistry {
         }
     }
 } 
+*/
