@@ -37,7 +37,6 @@ public class BillingServer {
             login = new BillingLogin(new BillingServerSecure());
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
             System.out.println("get registry: host " + host + " port " + port);
-
             rmiRegistry = LocateRegistry.getRegistry(host, port);
             rmiRegistry.rebind(bindingName, remoteBillingServer);
               

@@ -75,9 +75,9 @@ public class AnalyticsServer implements IAnalytics {
     public void start() {
         try {
             remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
-            rmiRegistry = LocateRegistry.createRegistry(port);
+            System.out.println("get registry: host " + host + " port " + port);
+            rmiRegistry = LocateRegistry.getRegistry(host, port);
             rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
-            System.out.println("registry created: host " + host + " port " + port);
 
         } catch (RemoteException ex) {
             Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);

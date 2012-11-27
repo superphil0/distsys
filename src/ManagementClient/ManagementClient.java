@@ -14,6 +14,7 @@ import Server.AnalyticsServer.AnalyticsServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author daniela
  */
-public class ManagementClient implements IManagementClientCallback {
+public class ManagementClient implements IManagementClientCallback, Serializable {
 
     private String id = UUID.randomUUID().toString();
     private IBillingSecure billingService = null;
@@ -69,6 +70,17 @@ public class ManagementClient implements IManagementClientCallback {
             
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
+            
+            
+            //TEST
+            System.out.println(analyticsService.subscribe("blubb", this));
+            System.out.println(analyticsService.subscribe("blubb", this));
+            System.out.println(analyticsService.subscribe("blubb", this));
+            System.out.println(analyticsService.subscribe("blubb", this));
+            
+            
+            
+            
         } catch (AccessException ex) {
             Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
