@@ -11,7 +11,7 @@ public class Bills {
 		this.priceSteps = steps;
 	}
 	
-	public void storeBill(String user, long auctionID, double price)
+	public synchronized void storeBill(String user, long auctionID, double price)
 	{
 		if(!userBills.containsKey(user))
 		{
@@ -21,7 +21,7 @@ public class Bills {
 		
 	}
 	
-	public Bill getBill(String user)
+	public synchronized Bill getBill(String user)
 	{
 		if(userBills.containsKey(user))
 		{
