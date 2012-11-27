@@ -30,7 +30,7 @@ public class CalculateStatistics implements Runnable {
     private static HashMap<String, Long> userList = new HashMap<String, Long>();
     private static long serverStarttime;
     private static int userCounter = 0, auctionCounter = 0, bidCount = 0, successfulAuctions = 0;
-    private static long userSessiontimeSum = 0;
+    private static long userSessiontimeSum = 0, auctionTimeSum = 0;
     private static long sessiontimeMin = Long.MAX_VALUE, sessiontimeMax = 0, sessiontimeAvg = 0;
     private static double bidPriceMax = 0, bidCountPerMinute = 0;
 
@@ -49,17 +49,27 @@ public class CalculateStatistics implements Runnable {
         if (event != null) {
             if (event instanceof AuctionEvent) {
                 AuctionEvent auctionEvent = (AuctionEvent) event;
-                
-                if(auctionEvent.getType().equals("AUCTION_STARTED")) {
+
+                if (auctionEvent.getType().equals("AUCTION_STARTED")) {
                     auctionList.put(auctionEvent.getAuctionID(), auctionEvent.getTimestamp());
                     auctionCounter++;
-                    
-                } else if(auctionEvent.getType().equals("AUCTION_ENDED")) {
-                    
+
+                } else if (auctionEvent.getType().equals("AUCTION_ENDED")) {
+                    try {
+                        long auctionStarttime = auctionList.get(auctionEvent.getAuctionID());
+                        long currentAuctionTime = auctionEvent.getTimestamp() - auctionStarttime;
+                        auctionTimeSum += currentAuctionTime;
+
+                        long auctionTimeAvg = auctionTimeSum / auctionCounter;
+                        server.processEvent(new StatisticsEvent("AUCTION_TIME_AVG", new Date().getTime(), auctionTimeAvg));
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(CalculateStatistics.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 } else {
                     //invalid type
-                } 
-                
+                }
+
             } else if (event instanceof BidEvent) {
                 BidEvent bidEvent = (BidEvent) event;
 
@@ -76,15 +86,15 @@ public class CalculateStatistics implements Runnable {
                             bidPriceMax = currentBidPrice;
                             server.processEvent(new StatisticsEvent("BID_PRICE_MAX", new Date().getTime(), bidPriceMax));
                         }
-                        
-                        if(!successfulAuctionList.containsKey(bidEvent.getAuctionID())){
+
+                        if (!successfulAuctionList.containsKey(bidEvent.getAuctionID())) {
                             successfulAuctions++;
                             successfulAuctionList.put(bidEvent.getAuctionID(), bidEvent.getAuctionID());
-                            double auctionSuccessRatio = ((double)successfulAuctions)/((double)auctionCounter);
+                            double auctionSuccessRatio = ((double) successfulAuctions) / ((double) auctionCounter);
                             server.processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", new Date().getTime(), auctionSuccessRatio));
-                        } 
+                        }
 
-                    //} else if (bidEvent.getType().equals("BID_WON")) { //no statistic to calculate
+                        //} else if (bidEvent.getType().equals("BID_WON")) { //no statistic to calculate
                     } else {
                         //invalid type
                     }

@@ -14,7 +14,7 @@ import java.util.UUID;
  * @author daniela
  */
 public class ManagementClient implements IManagementClientCallback {
-    private String id = UUID.randomUUID().toString();;
+    private String id = UUID.randomUUID().toString();
 
     public void receiveEvent(Event event) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
