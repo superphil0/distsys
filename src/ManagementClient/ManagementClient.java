@@ -11,7 +11,6 @@ import Common.IManagementClientCallback;
 import Events.Event;
 import PropertyReader.RegistryProperties;
 import Server.AnalyticsServer.AnalyticsServer;
-import Server.RMIRegistry;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,10 +37,12 @@ public class ManagementClient implements IManagementClientCallback {
     private BufferedReader stdIn;
     private IAnalytics analyticsService;
         private int port = RegistryProperties.getPort();
+        private String host = RegistryProperties.getHost();
 
 
     public static void main(String[] args) throws RemoteException {
 
+        RegistryProperties r = new RegistryProperties();
         //args: bindingNames 0-analytics 1-billing
         if (args.length == 2) {
             //System.out.println(args[0] + " " + args[1]);
@@ -62,7 +63,10 @@ public class ManagementClient implements IManagementClientCallback {
 
     private void start() {
         try {
-            rmiRegistry = RMIRegistry.getRmiRegistry();
+            rmiRegistry = LocateRegistry.getRegistry(host, port);
+            
+            System.out.println("registry located");
+            
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
         } catch (AccessException ex) {

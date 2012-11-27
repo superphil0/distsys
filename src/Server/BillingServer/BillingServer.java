@@ -9,7 +9,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import Server.RMIRegistry;
 import java.rmi.registry.LocateRegistry;
 
 public class BillingServer {
@@ -18,8 +17,11 @@ public class BillingServer {
     private Registry rmiRegistry;
     private Remote remoteBillingServer;
     private int port = RegistryProperties.getPort();
+    private String host = RegistryProperties.getHost();
 
     public static void main(String[] args) {
+                RegistryProperties r = new RegistryProperties();
+
         BillingServer server = new BillingServer();
         if (args.length != 1) {
             System.out.println("Wrong number of arguments!");
@@ -30,18 +32,21 @@ public class BillingServer {
     }
 
     public void start(String bindingName) {
-        login = new BillingLogin(new BillingServerSecure());
+
         try {
-            rmiRegistry = RMIRegistry.getRmiRegistry();
+            login = new BillingLogin(new BillingServerSecure());
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
-        } catch (RemoteException e) {
-            Logger.getLogger(BillingServer.class.getName()).log(Level.SEVERE, null, e);
-        }
-        try {
+            System.out.println("get registry: host " + host + " port " + port);
+
+            rmiRegistry = LocateRegistry.getRegistry(host, port);
             rmiRegistry.rebind(bindingName, remoteBillingServer);
-            System.out.println("Server bound to rmiRegistry by name: " + bindingName);
+              
         } catch (RemoteException ex) {
-            Logger.getLogger(BillingServer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
+
+
+
     }
 }

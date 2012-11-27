@@ -17,9 +17,9 @@ public class RegistryProperties extends PropertyReader{
     private static String host;
     private static int port;
     private static String path = "registry.properties";
-    private RegistryProperties registryProperties = new RegistryProperties(); 
+    //private RegistryProperties registryProperties = new RegistryProperties(); 
     
-    private RegistryProperties() {
+    public RegistryProperties() {
         super(path);
         host = props.getProperty("registry.host");
         port = Integer.parseInt(props.getProperty("registry.port"));

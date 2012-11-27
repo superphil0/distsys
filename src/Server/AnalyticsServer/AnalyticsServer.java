@@ -13,8 +13,9 @@ import Common.IManagementClientCallback;
 import Common.IProcessEvent;
 import Common.ISubscribe;
 import Common.IUnsubscribe;
-import Server.RMIRegistry;
 import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
@@ -35,6 +36,7 @@ public class AnalyticsServer implements IAnalytics {
     private ExecutorService executer;
     //Port from the RMI-Registry
     private int port = RegistryProperties.getPort();
+    private String host = RegistryProperties.getHost();
     private Registry rmiRegistry;
     //Remote Object of this Server to export
     private Remote remoteAnalyticsServer;
@@ -51,6 +53,7 @@ public class AnalyticsServer implements IAnalytics {
      * @throws RemoteException
      */
     public static void main(String[] args) throws RemoteException {
+        RegistryProperties r = new RegistryProperties();
         AnalyticsServer server = new AnalyticsServer();
         if (args.length == 1) {
             server.setBindingName(args[0]);
@@ -71,21 +74,15 @@ public class AnalyticsServer implements IAnalytics {
 
     public void start() {
         try {
-         rmiRegistry = RMIRegistry.getRmiRegistry();
-         } catch (RemoteException ex) {
-         Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
-         }
-        
-        try {
             remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
+            rmiRegistry = LocateRegistry.createRegistry(port);
             rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
-
-            System.out.println("Server bound to rmiRegistry by name: " + bindingName);
-
+            System.out.println("registry created: host " + host + " port " + port);
 
         } catch (RemoteException ex) {
             Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+          
     }
 
     public void setBindingName(String bindingName) {
