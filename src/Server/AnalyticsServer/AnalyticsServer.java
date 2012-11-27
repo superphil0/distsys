@@ -4,6 +4,7 @@
  */
 package Server.AnalyticsServer;
 
+import Common.IAnalytics;
 import Events.Event;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -13,7 +14,10 @@ import Common.IProcessEvent;
 import Common.ISubscribe;
 import Common.IUnsubscribe;
 import Server.RMIRegistry;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +29,7 @@ import java.util.logging.Logger;
  *
  * @author daniela
  */
-public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe {
+public class AnalyticsServer implements IAnalytics {
 
     //ThreadPool
     private ExecutorService executer;
@@ -66,16 +70,24 @@ public class AnalyticsServer implements ISubscribe, IProcessEvent, IUnsubscribe 
     }
 
     public void start() {
-   
-        rmiRegistry = RMIRegistry.getRmiRegistry();
+        try {
+         rmiRegistry = RMIRegistry.getRmiRegistry();
+         } catch (RemoteException ex) {
+         Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+         }
+        
         try {
             remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
             rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
+
+            System.out.println("Server bound to rmiRegistry by name: " + bindingName);
+
 
         } catch (RemoteException ex) {
             Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }

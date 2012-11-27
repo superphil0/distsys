@@ -20,13 +20,14 @@ public class RMIRegistry {
     private static int port = RegistryProperties.getPort();
     private static Registry rmiRegistry = null;
 
-    public synchronized static Registry getRmiRegistry() {
+    public synchronized static Registry getRmiRegistry() throws RemoteException {
 
         //creates RMI Registry, if it already exist - get it
         if(rmiRegistry == null) {
             createRegistry();
         }
         return rmiRegistry;
+        //return LocateRegistry.getRegistry(port);
     }
 
     private static void createRegistry() {

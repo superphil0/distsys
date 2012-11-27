@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- */
+ *
 package Client;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.DatagramSocket;
 /**
  *
  * @author daniela
- */
+ *
 public class ClientThreadUDP extends Thread {
 
     private byte[] buf = new byte[256];
@@ -45,3 +45,4 @@ public class ClientThreadUDP extends Thread {
 
     }
 }
+*/

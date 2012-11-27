@@ -11,7 +11,7 @@
     <property name="client1.port" value="13481"/><!-- UDP port of 1st Bidding Client -->
     <property name="client2.port" value="13482"/><!-- UDP port of 2nd Bidding Client -->
     <property name="client3.port" value="13483"/><!-- UDP port of 3rd Bidding Client -->
-    <property name="mgmtclient.name" value="Server.ManagementClient"/><!-- Management Client's full class name (including the package) -->
+    <property name="mgmtclient.name" value="ManagementClient.ManagementClient"/><!-- Management Client's full class name (including the package) -->
     <property name="analytics.name" value="Server.AnalyticsServer.AnalyticsServer"/><!-- Analytics Server's full class name (including the package) -->
     
     

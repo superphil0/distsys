@@ -49,7 +49,7 @@ public class ServerThread extends Thread {
 
         try {
 
-            if ((inputLine = in.readLine()) != null) {
+           /* if ((inputLine = in.readLine()) != null) {
                 try {
                     //System.out.println("tcp port: "+socket.getPort());
                     udpPort = Integer.parseInt(inputLine);
@@ -58,7 +58,7 @@ public class ServerThread extends Thread {
                 } catch (NumberFormatException e) {
                     out.println("Problem with udpPort");
                 }
-            }
+            }*/
                     cp = new CommandProtocol(this);
 
 
@@ -79,7 +79,7 @@ public class ServerThread extends Thread {
 
     }
 
-    public synchronized void sendNotification(String notification) {
+    /*public synchronized void sendNotification(String notification) {
         if (dataSocket != null) {
             buf = notification.getBytes();
             dataPacket = new DatagramPacket(buf, buf.length, socket.getInetAddress(), udpPort);
@@ -90,7 +90,7 @@ public class ServerThread extends Thread {
         } else {
             //System.out.println("no data socket, note " + notification);
         }
-    }
+    }*/
 
     protected void close() {
         try {

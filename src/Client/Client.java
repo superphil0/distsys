@@ -42,7 +42,7 @@ public class Client {
         try {
             host = args[0];
             tcpPort = Integer.parseInt(args[1]);
-            udpPort = Integer.parseInt(args[2]);
+            //udpPort = Integer.parseInt(args[2]);
 
             //TCP Connection
             socket = new Socket(host, tcpPort);
@@ -56,8 +56,8 @@ public class Client {
             System.out.println("Connected successfully to Server!");
             ok = true;
 
-        } catch (NumberFormatException e) {
-            System.err.println("Please enter only Numbers tor TCP und UDP Port.");
+        } catch (NumberFormatException e) {                     //and udp
+            System.err.println("Please enter only Numbers for TCP Port.");
             //System.exit(1);
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + host + ".");
@@ -76,8 +76,8 @@ public class Client {
             ctTCP.start();
 
             // Start UDP Thread
-            ClientThreadUDP ctUDP = new ClientThreadUDP(udpPort);
-            ctUDP.start();
+            //ClientThreadUDP ctUDP = new ClientThreadUDP(udpPort);
+            //ctUDP.start();
 
 
 
@@ -88,7 +88,7 @@ public class Client {
             try {
                 
                 //System.out.println(udpPort+"");
-                out.println(udpPort);
+                //out.println(udpPort);
 
                 //receiving User-Commands until input is null --> shut down
                 while ((fromUser = stdIn.readLine()) != null) {// && !fromUser.isEmpty()) {
