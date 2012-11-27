@@ -43,6 +43,7 @@ public class BillingLogin implements IBillingLogin {
 		}
 		BufferedReader in = null;
 		try {
+			System.out.println(System.getProperty("user.dir"));
 			in = new BufferedReader(new FileReader("user.properties"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -52,6 +53,7 @@ public class BillingLogin implements IBillingLogin {
 		try {
 			while (in.ready()) {
 			  String s = in.readLine();
+			  if(s.startsWith("#")) continue;
 			  String name = s.split("=")[0];
 			  String password = s.split("=")[1];
 			  
