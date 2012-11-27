@@ -20,6 +20,11 @@ public class ServerStartUp {
     public static void main(String[] args) throws IOException {
 
         int port = 0;
+        if(args.length != 1)
+        {
+        	System.out.println("Please enter the port as argument on which you want the server to run");
+        	System.exit(0);
+        }
         if (args != null && !args[0].isEmpty()) {
             try {
                 port = Integer.parseInt(args[0]);

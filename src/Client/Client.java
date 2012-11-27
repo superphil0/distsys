@@ -34,6 +34,11 @@ public class Client {
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
 
+    	if(args.length < 2)
+    	{
+    		System.out.println("Please enter hostname + hostport to connect to auction server");
+    		System.exit(0);
+    	}
         try {
             host = args[0];
             tcpPort = Integer.parseInt(args[1]);
