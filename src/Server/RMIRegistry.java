@@ -18,23 +18,24 @@ import java.util.logging.Logger;
  * @author daniela
  */
 public class RMIRegistry {
+
     private static int port = RegistryProperties.getPort();
-    private static Registry rmiRegistry;
+    private static Registry rmiRegistry = null;
 
     public synchronized static Registry getRmiRegistry() {
-        
-        //get RMI Registry, if it doesn't exist - create it
-        try {
-            rmiRegistry = LocateRegistry.getRegistry(port);
-        } catch (RemoteException ex) {
-            try {
-                rmiRegistry = LocateRegistry.createRegistry(port);
-            } catch (RemoteException ex1) {
-                Logger.getLogger(RMIRegistry.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-        }   
+
+        //creates RMI Registry, if it already exist - get it
+        if(rmiRegistry == null) {
+            createRegistry();
+        }
         return rmiRegistry;
     }
-    
-    
+
+    private static void createRegistry() {
+        try {
+            rmiRegistry = LocateRegistry.createRegistry(port);
+        } catch (RemoteException ex) {
+            Logger.getLogger(RMIRegistry.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
