@@ -7,6 +7,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import Server.RMIRegistry;
+
 
 public class BillingServer {
 	private BillingLogin login;
@@ -28,6 +30,7 @@ public class BillingServer {
 	{
 		login = new BillingLogin(new BillingServerSecure());
 		try {
+			rmiRegistry = RMIRegistry.getRmiRegistry();
 			remoteAnalyticsServer = UnicastRemoteObject.exportObject(login, 0);
 		} catch (RemoteException e) {
 			Logger.getLogger(BillingServer.class.getName()).log(Level.SEVERE, null, e);
