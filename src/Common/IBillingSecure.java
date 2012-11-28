@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import Server.BillingServer.Bill;
-import Server.BillingServer.PriceStep;
 import Server.BillingServer.PriceSteps;
 
 public interface IBillingSecure extends Remote{

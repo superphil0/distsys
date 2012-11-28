@@ -10,9 +10,6 @@ import Common.IBillingSecure;
 import Common.IManagementClientCallback;
 import Events.Event;
 import PropertyReader.RegistryProperties;
-import Server.AnalyticsServer.AnalyticsServer;
-import Server.BillingServer.BillingServerSecure;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,7 +41,7 @@ public class ManagementClient implements IManagementClientCallback {
 
     public static void main(String[] args) throws RemoteException {
 
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
         //args: bindingNames 0-analytics 1-billing
         if (args.length == 2) {
             //System.out.println(args[0] + " " + args[1]);
@@ -90,6 +87,17 @@ public class ManagementClient implements IManagementClientCallback {
 			 secure = billingLogin.login("john", "dslab2012");
 			 secure.createPriceStep(10, 20, 10, 3);
 			 System.out.println(secure.getPriceSteps());
+			 secure.deletePriceStep(10, 20);
+			 System.out.println(secure.getPriceSteps());
+			 secure.createPriceStep(10, 40, 10, 3);
+			 secure.createPriceStep(40, 0, 20, 5);
+			 System.out.println(secure.getPriceSteps());
+			 secure.billAuction("Philipp", 2, 20);
+			 secure.billAuction("Philipp", 3, 2000);
+			 secure.billAuction("Philipp", 4, 40);
+			 secure.billAuction("Philipp", 5, 30);
+			 secure.billAuction("Paiö", 6, 30);
+			 System.out.println(secure.getBill("Philipp"));
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

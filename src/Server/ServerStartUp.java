@@ -20,7 +20,6 @@ public class ServerStartUp {
     public static void main(String[] args) throws IOException {
 
         int port = 0;
-        String analyticsBindingName, billingBindingName;
         if(args.length != 3)
         {
         	System.out.println("Please enter the port, analyticsBindingName and"
@@ -31,8 +30,6 @@ public class ServerStartUp {
         if (args != null && !args[0].isEmpty()) {
             try {
                 port = Integer.parseInt(args[0]);
-                analyticsBindingName = args[1];
-                billingBindingName = args[2];
             } catch (NumberFormatException nfe) {
                 System.err.println("PortNumber has to be a number! E.g. Server <Port>");
             }

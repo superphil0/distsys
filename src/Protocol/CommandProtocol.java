@@ -16,9 +16,6 @@ import User.UserHandler;
  */
 public class CommandProtocol {
 
-    private static final int LOGGED_OUT = 0;
-    private static final int LOGGED_IN = 1;
-    private int state = LOGGED_OUT;
     private User currentUser = null;
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;

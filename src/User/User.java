@@ -5,10 +5,6 @@
 package User;
 
 import Server.ServerThread;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -19,9 +15,6 @@ public class User {
     private static final int LOGGED_OUT = 0;
     private static final int LOGGED_IN = 1;
     private int state = LOGGED_OUT;
-    //private long loginTimestamp, logoutTimestamp;
-    private ServerThread serverThread;
-    
     private String username;
     //outstanding udp notifications
     //List<String> notifications;
@@ -37,21 +30,10 @@ public class User {
      */
     public synchronized void login(ServerThread serverThread) {
             state = LOGGED_IN;
-            this.serverThread = serverThread;
-            /*if(!notifications.isEmpty()) {
-                for(int i = 0; i < notifications.size(); i++) {
-                    sendToUser(notifications.get(i));
-                    notifications.remove(i);
-                }
-            }*/
-            //loginTimestamp = new Date().getTime();
-            //logoutTimestamp = 0;
     }
     
     public void logout() {
         state = LOGGED_OUT;
-        serverThread = null;
-        //logoutTimestamp = new Date().getTime();
         
         //TODO EVENT!
     }

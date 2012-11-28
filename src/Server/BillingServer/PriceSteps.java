@@ -62,7 +62,7 @@ public class PriceSteps implements Serializable{
 				return p;			
 			}
 		}
-		return null;
+		return new PriceStep(0, 0, 0, 0);
 	}
 	
 	

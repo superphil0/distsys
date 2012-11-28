@@ -1,7 +1,5 @@
 package Server.BillingServer;
 
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -9,6 +7,10 @@ import Common.IBillingSecure;
 
 
 public class BillingServerSecure extends UnicastRemoteObject implements IBillingSecure {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 
 	 */

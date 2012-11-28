@@ -1,8 +1,13 @@
 package Server.BillingServer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Bills {
+public class Bills implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3465364019720640045L;
 	private HashMap<String, Bill> userBills;
 	private PriceSteps priceSteps;
 	public Bills(PriceSteps steps)
