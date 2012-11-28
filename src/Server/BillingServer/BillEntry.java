@@ -1,6 +1,12 @@
 package Server.BillingServer;
 
-public class BillEntry {
+import java.io.Serializable;
+
+public class BillEntry implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2193852192125265558L;
 	private long auctionID;
 	private double price;
 	public BillEntry(long auctionID2, double price)

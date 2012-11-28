@@ -19,12 +19,10 @@ public class Subscription implements Runnable {
     private String id;
     private static long counter = 0;
     private IManagementClientCallback callbackObject;
-    private String filter;
     private Event event;
     private AnalyticsServer server;
 
     public Subscription(String filter, IManagementClientCallback callbackObject, AnalyticsServer server) {
-        this.filter = filter;
         this.callbackObject = callbackObject;
         id = String.valueOf(counter++);
     }

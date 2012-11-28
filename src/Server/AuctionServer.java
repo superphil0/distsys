@@ -5,7 +5,6 @@
 package Server;
 
 import User.UserHandler;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
  */
 public class AuctionServer extends Thread {
 
-    private static BufferedReader stdIn;
     private static int port;
     private static ServerSocket listeningSocket = null;
     private static ArrayList<ServerThread> serverList;
