@@ -20,10 +20,13 @@ public class AuctionServer extends Thread {
     private static int port;
     private static ServerSocket listeningSocket = null;
     private static ArrayList<ServerThread> serverList;
+    private String analyticsBindingName, billingBindingName;
 
-    public AuctionServer(int port) {
+    public AuctionServer(int port, String analyticsBindingName, String billingBindingName) {
         this.port = port;
         serverList = new ArrayList<ServerThread>();
+        this.analyticsBindingName = analyticsBindingName;
+        this.billingBindingName = billingBindingName;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class AuctionServer extends Thread {
 
         while (listening) {
             try {
-                ServerThread clientCon = new ServerThread(listeningSocket.accept());
+                ServerThread clientCon = new ServerThread(listeningSocket.accept(), analyticsBindingName, billingBindingName);
                 clientCon.start();
                 serverList.add(clientCon);
             } catch (IOException ex) {

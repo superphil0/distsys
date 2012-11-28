@@ -38,6 +38,7 @@ public class AnalyticsServer implements IAnalytics {
     //List with all subscriptions containing String ID + SubscriptionObject
     private HashMap<String, Subscription> subscriptions = new HashMap<String, Subscription>();
     private static long serverStarttime = new Date().getTime();
+    private CalculateStatistics calculator;
 
     /**
      * starts a AnalyticsServer as Thread
@@ -66,16 +67,24 @@ public class AnalyticsServer implements IAnalytics {
     }
 
     public void start() {
+        calculator = new CalculateStatistics(this);
         try {
             remoteAnalyticsServer = UnicastRemoteObject.exportObject(this, 0);
-            rmiRegistry = LocateRegistry.createRegistry(port);
+            rmiRegistry = LocateRegistry.getRegistry(host, port);
             rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
-            System.out.println("registry created: host " + host + " port " + port);
+            System.out.println("get registry: host " + host + " port " + port);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                rmiRegistry = LocateRegistry.createRegistry(port);
+                rmiRegistry.rebind(bindingName, remoteAnalyticsServer);
+                System.out.println("Registry created on port " + port);
+
+            } catch (RemoteException ex1) {
+                Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
-          
+
     }
 
     public void setBindingName(String bindingName) {
@@ -95,7 +104,7 @@ public class AnalyticsServer implements IAnalytics {
         //TODO calculate statistics
         //if event !instanceof StatisticsEvent
 
-
+        calculator.calculate(event);
         //send Event to all subscribers, they decide whether they need it or not
         for (Subscription subscription : subscriptions.values()) {
             subscription.sendEvent(event);
@@ -107,6 +116,9 @@ public class AnalyticsServer implements IAnalytics {
         if (subscriptions.containsKey(id)) {
             subscriptions.remove(id);
         }
+        /*for (Subscription subscription : subscriptions.values()) {
+         System.out.println("active subs " + subscription.getID());
+         }*/
     }
 
     public long getStarttime() {

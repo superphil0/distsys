@@ -22,10 +22,21 @@ public class ServerThread extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private CommandProtocol cp;
-    public ServerThread(Socket socket) {
+
+    private int udpPort;
+
+    private byte[] buf;
+    private String analyticsBindingName, billingBindingName;
+
+
+    public ServerThread(Socket socket, String analyticsBindingName, String billingBindingName) {
+
         super("ServerThread");
         this.socket = socket;
-
+        
+        this.analyticsBindingName = analyticsBindingName;
+        this.billingBindingName = billingBindingName;
+        
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -52,7 +63,7 @@ public class ServerThread extends Thread {
                     out.println("Problem with udpPort");
                 }
             }*/
-                    cp = new CommandProtocol(this);
+                    cp = new CommandProtocol(this, analyticsBindingName, billingBindingName);
 
 
             //while Client is sending - answer
