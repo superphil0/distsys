@@ -38,9 +38,9 @@ public class BillingLogin implements IBillingLogin {
 	private LinkedList<ManageUser> validUsers = new LinkedList<ManageUser>();
 	private IBillingSecure billingServer;
 	private MessageDigest md5;
-	public BillingLogin(BillingSecure server)
+	public BillingLogin(BillingServerSecure billingServerSecure)
 	{
-		this.billingServer = (IBillingSecure) server;
+		this.billingServer = (IBillingSecure) billingServerSecure;
 		try {
 			md5 = java.security.MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e1) {

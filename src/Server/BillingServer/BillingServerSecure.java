@@ -3,19 +3,21 @@ package Server.BillingServer;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 import Common.IBillingSecure;
 
 
-public class BillingServerSecure implements IBillingSecure {
+public class BillingServerSecure extends UnicastRemoteObject implements IBillingSecure {
 	/**
 	 * 
 	 */
 	private PriceSteps priceSteps;
 	private Bills bills;
 	
-	public BillingServerSecure()
+	public BillingServerSecure() throws RemoteException
 	{
+		super();
 		priceSteps = new PriceSteps();
 		bills = new Bills(priceSteps);
 	}
