@@ -11,6 +11,8 @@ import Common.IManagementClientCallback;
 import Events.Event;
 import PropertyReader.RegistryProperties;
 import Server.AnalyticsServer.AnalyticsServer;
+import Server.BillingServer.BillingServerSecure;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -83,6 +85,14 @@ public class ManagementClient implements IManagementClientCallback {
             System.out.println("analyticsService: " + analyticsBindingName);
             System.out.println("billingLogin: " + billingBindingName);
         }
+        IBillingSecure secure = null;
+        try {
+			 secure = billingLogin.login("john", "dslab2012");
+			 secure.createPriceStep(0, 100, 10, 3);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
         String[] input;
@@ -95,7 +105,7 @@ public class ManagementClient implements IManagementClientCallback {
                     if (billingService == null) {
                         input = fromUser.split(" ");
                         if (input.length == 3) {
-                            billingService = billingLogin.login(input[1], input[2]);
+                            //billingService = billingLogin.login(input[1], input[2]);
                         } else {
                             System.out.println("Please login! Usage: !login <username> <pw>");
                         }

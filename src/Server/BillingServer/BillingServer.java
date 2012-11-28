@@ -34,7 +34,7 @@ public class BillingServer {
     public void start(String bindingName) {
 
         try {
-            login = new BillingLogin(new BillingServerSecure());
+            login = new BillingLogin(new BillingSecure(new BillingServerSecure()));
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
             System.out.println("get registry: host " + host + " port " + port);
 

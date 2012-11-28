@@ -17,15 +17,11 @@ public class RegistryProperties extends PropertyReader{
     private static String host;
     private static int port;
     private static String path = "registry.properties";
-<<<<<<< HEAD
-    private RegistryProperties registryProperties = new RegistryProperties(); 
-    
-    private RegistryProperties() {
-=======
+
     //private RegistryProperties registryProperties = new RegistryProperties(); 
     
     public RegistryProperties() {
->>>>>>> Dani
+
         super(path);
         host = props.getProperty("registry.host");
         port = Integer.parseInt(props.getProperty("registry.port"));

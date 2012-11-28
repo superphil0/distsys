@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 
 import Common.IBillingLogin;
+import Common.IBillingSecure;
 
 
 class ManageUser
@@ -32,11 +35,11 @@ class ManageUser
 
 public class BillingLogin implements IBillingLogin {
 	private LinkedList<ManageUser> validUsers = new LinkedList<ManageUser>();
-	private BillingServerSecure billingServer;
+	private IBillingSecure billingServer;
 	private MessageDigest md5;
-	public BillingLogin(BillingServerSecure server)
+	public BillingLogin(BillingSecure server)
 	{
-		this.billingServer = server;
+		this.billingServer = (IBillingSecure) server;
 		try {
 			md5 = java.security.MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e1) {
@@ -55,8 +58,8 @@ public class BillingLogin implements IBillingLogin {
 			while (in.ready()) {
 			  String s = in.readLine();
 			  if(s.startsWith("#")) continue;
-			  String name = s.split("=")[0];
-			  String password = s.split("=")[1];
+			  String name = s.split("=")[0].trim();
+			  String password = s.split("=")[1].trim();
 			  
 			  validUsers.add(new ManageUser(name, password));
 			}
@@ -73,8 +76,17 @@ public class BillingLogin implements IBillingLogin {
 	}
 
 	@Override
-	public BillingServerSecure login(String username, String password) throws RemoteException {
-		ManageUser user = new ManageUser(username.trim(), md5.digest(password.trim().getBytes()).toString()); 
+	public IBillingSecure login(String username, String password) throws RemoteException {
+		String hashedPassword =null;
+		try {
+			byte[] digest = md5.digest(password.trim().getBytes("UTF-8"));
+			BigInteger bigInt = new BigInteger(1,digest);
+			hashedPassword = bigInt.toString(16);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		ManageUser user = new ManageUser(username.trim(), hashedPassword);
 		if(!validUsers.contains(user))
 		{
 			return null;
