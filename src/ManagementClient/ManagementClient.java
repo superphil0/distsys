@@ -98,6 +98,7 @@ public class ManagementClient implements IManagementClientCallback, Serializable
             System.out.println("analyticsService: " + analyticsBindingName);
             System.out.println("billingLogin: " + billingBindingName);
         }
+        // test code
         IBillingSecure secure = null;
         try {
 			 secure = billingLogin.login("john", "dslab2012");

@@ -4,6 +4,8 @@
  */
 package Protocol;
 
+import java.util.Collection;
+
 import Auction.Auction;
 import Auction.AuctionHandler;
 import Common.IAnalytics;
@@ -202,7 +204,8 @@ public class CommandProtocol {
     private String listAuctions() {
         String list = "", highestBidder;
         if (auctionHandler.hasAuctions()) {
-            for (Auction a : auctionHandler.getAllAuctions().values()) {
+        	Collection<Auction> auctions = auctionHandler.getAllAuctions().values();
+            for (Auction a : auctions ) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
                     a.getHighestBidder().getUsername();
