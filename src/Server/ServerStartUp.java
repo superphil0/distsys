@@ -19,16 +19,17 @@ import java.util.Scanner;
 public class ServerStartUp {
 
     private static AuctionServer auctionServer;
+    private static String analyticsBindingName, billingBindingName;
+
 
     public static void main(String[] args) throws IOException {
         RegistryProperties r = new RegistryProperties();
         int rport = RegistryProperties.getPort();
         String rhost = RegistryProperties.getHost();
-        Registry rmiRegistry = LocateRegistry.createRegistry(rport);
-        System.out.println("registry created: host " + rhost + " port " + rport);
+        //Registry rmiRegistry = LocateRegistry.createRegistry(rport);
+        //System.out.println("registry created: host " + rhost + " port " + rport);
 
         int port = 0;
-        String analyticsBindingName, billingBindingName;
         if (args.length != 3) {
             System.out.println("Please enter the port, analyticsBindingName and"
                     + "billingBindingName  as argument on which you want the server to run");
@@ -49,7 +50,7 @@ public class ServerStartUp {
         System.out.println("AuctionServer started, hit enter to shut down.");
 
         if (port > 0) {
-            auctionServer = new AuctionServer(port);
+            auctionServer = new AuctionServer(port, analyticsBindingName, billingBindingName);
             auctionServer.start();
         }
 

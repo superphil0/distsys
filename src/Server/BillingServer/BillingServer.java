@@ -20,7 +20,7 @@ public class BillingServer {
     private String host = RegistryProperties.getHost();
 
     public static void main(String[] args) {
-                RegistryProperties r = new RegistryProperties();
+        RegistryProperties r = new RegistryProperties();
 
         BillingServer server = new BillingServer();
         if (args.length != 1) {
@@ -36,13 +36,21 @@ public class BillingServer {
         try {
             login = new BillingLogin(new BillingServerSecure());
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
-            System.out.println("get registry: host " + host + " port " + port);
             rmiRegistry = LocateRegistry.getRegistry(host, port);
             rmiRegistry.rebind(bindingName, remoteBillingServer);
-              
+            System.out.println("get registry: host " + host + " port " + port);
+
+
         } catch (RemoteException ex) {
+            try {
                 Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
-            
+                rmiRegistry = LocateRegistry.createRegistry(port);
+                rmiRegistry.rebind(bindingName, remoteBillingServer);
+                System.out.println("Registry created on port " + port);
+
+            } catch (RemoteException ex1) {
+                Logger.getLogger(BillingServer.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
 
 
