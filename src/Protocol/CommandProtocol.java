@@ -177,7 +177,8 @@ public class CommandProtocol {
                 } catch (RemoteException ex) {
                     Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
                 }*/
-                currentUser.logout();
+                userHandler.logout(currentUser);
+                //currentUser.logout();
                 currentUser = null;
                 strOutput = "Successfully logged out.";
 
