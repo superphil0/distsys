@@ -113,6 +113,9 @@ public class AnalyticsServer implements IAnalytics {
     public void unsubscribe(String id) throws RemoteException {
         if (subscriptions.containsKey(id)) {
             subscriptions.remove(id);
+        }        
+        for (Subscription subscription : subscriptions.values()) {
+            System.out.println("active subs " + subscription.getID());
         }
     }
 

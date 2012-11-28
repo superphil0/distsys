@@ -10,11 +10,9 @@ import Common.IBillingSecure;
 import Common.IManagementClientCallback;
 import Events.Event;
 import PropertyReader.RegistryProperties;
-import Server.AnalyticsServer.AnalyticsServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -38,10 +36,10 @@ public class ManagementClient implements IManagementClientCallback, Serializable
     private static Registry rmiRegistry;
     private BufferedReader stdIn;
     private IAnalytics analyticsService;
-        private int port = RegistryProperties.getPort();
-        private String host = RegistryProperties.getHost();
-        private MClientOutput mct;
-
+    private int port = RegistryProperties.getPort();
+    private String host = RegistryProperties.getHost();
+    private String storedMessages = "";
+    private boolean printEvents = true;
 
     public static void main(String[] args) throws RemoteException {
 
@@ -67,25 +65,25 @@ public class ManagementClient implements IManagementClientCallback, Serializable
     private void start() {
         try {
             rmiRegistry = LocateRegistry.getRegistry(host, port);
-            
+
             System.out.println("registry located");
-            
+
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
-            
-            
+
+
             //TEST
-            System.out.println(analyticsService.subscribe("blubb", this));
+            System.out.println(analyticsService.subscribe("blubb", (IManagementClientCallback) this));
             /*System.out.println(analyticsService.subscribe("blubb", this));
-            System.out.println(analyticsService.subscribe("blubb", this));
-            System.out.println(analyticsService.subscribe("blubb", this));
+             System.out.println(analyticsService.subscribe("blubb", this));
+             System.out.println(analyticsService.subscribe("blubb", this));
             
-            analyticsService.unsubscribe("1");
-            analyticsService.unsubscribe("2");
+             analyticsService.unsubscribe("1");
+             analyticsService.unsubscribe("2");
             
-            */
-            
-            
+             */
+
+
         } catch (AccessException ex) {
             Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
@@ -102,97 +100,11 @@ public class ManagementClient implements IManagementClientCallback, Serializable
         }
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
-        String[] input;
 
         try {
             //reading UserInput
-            while ((fromUser = stdIn.readLine()) != null) {
-
-                if (fromUser.startsWith("!login") || fromUser.startsWith("!steps") || fromUser.startsWith("!addStep") || fromUser.startsWith("!removeStep") || fromUser.startsWith("!bill") || fromUser.startsWith("!logout")) {
-                    //talk to billing server
-                    if (billingService == null) {
-                        input = fromUser.split(" ");
-                        if (input.length == 3) {
-                            billingService = billingLogin.login(input[1], input[2]);
-                        } else {
-                            System.out.println("Please login! Usage: !login <username> <pw>");
-                        }
-
-                    } else {
-                        if (fromUser.equals("!logout")) {
-                            billingService = null;
-                        } else if (fromUser.equals("!steps")) {
-                            System.out.println(billingService.getPriceSteps().toString());
-                        } else if (fromUser.startsWith("!addStep")) {
-                            input = fromUser.split(" ");
-                            if (input.length == 5) {
-                                try {
-                                    billingService.createPriceStep(Double.parseDouble(input[1]), Double.parseDouble(input[2]), Double.parseDouble(input[3]), Double.parseDouble(input[4]));
-                                } catch (NumberFormatException ex) {
-                                    System.out.println("Usage: !addStep <startPrice> <endPrice> <fixedPrice> <variablePricePercent>");
-                                }
-                            } else {
-                                System.out.println("Usage: !addStep <startPrice> <endPrice> <fixedPrice> <variablePricePercent>");
-
-                            }
-                        } else if (fromUser.startsWith("!removeStep")) {
-                            input = fromUser.split(" ");
-                            if (input.length == 3) {
-                                try {
-                                    billingService.deletePriceStep(Double.parseDouble(input[1]), Double.parseDouble(input[2]));
-                                } catch (NumberFormatException ex) {
-                                    System.out.println("Usage: !removeStep <startPrice> <endPrice>");
-                                }
-                            } else {
-                                System.out.println("Usage: !removeStep <startPrice> <endPrice>");
-                            }
-                        } else if (fromUser.startsWith("!bill")) {
-                            input = fromUser.split(" ");
-                            if (input.length == 2) {
-                                try {
-                                    System.out.append(billingService.getBill(input[1]).toString());
-                                } catch (NumberFormatException ex) {
-                                    System.out.println("Usage: !bill <userName>");
-                                }
-                            } else {
-                                System.out.println("Usage: !bill <userName>");
-                            }
-                        } else {
-                            System.out.println("Unknown Command");
-                        }
-
-                    }
-                } else if (fromUser.startsWith("!subscribe") || fromUser.startsWith("!unsubscribe") || fromUser.startsWith("!auto") || fromUser.startsWith("!hide") || fromUser.startsWith("!print")) {
-                    //talk to analytics server
-                    if (fromUser.startsWith("!subscribe")) {
-                        input = fromUser.split(" ");
-                        if (input.length == 2) {
-                            //System.out.println(analyticsService.subscribe(input[1], this));
-                        } else {
-                            System.out.println("Usage: !subscribe <filterRegex>");
-                        }
-                    } else if (fromUser.startsWith("!unsubscribe")) {
-                        input = fromUser.split(" ");
-                        if (input.length == 2) {
-                            analyticsService.unsubscribe(input[1]);
-                            System.out.println("subscription " + input[1] + " terminated");
-                        } else {
-                            System.out.println("Usage: !unsubscribe <id>");
-                        }
-
-                    } else if (fromUser.equals("!auto")) {
-                        //TODO
-                    } else if (fromUser.equals("!hide")) {
-                        //TODO
-                    } else if (fromUser.equals("!print")) {
-                        //TODO
-                    } else {
-                        System.out.println("Unknown Command");
-                    }
-
-                } else {
-                    System.out.println("Unknown Command");
-                }
+            while ((fromUser = stdIn.readLine()) != null && !fromUser.equals("!end")) {
+                    processInput(fromUser);
             }
 
         } catch (IOException e) {
@@ -200,6 +112,117 @@ public class ManagementClient implements IManagementClientCallback, Serializable
         } finally {
             System.out.println("Bye.");
         }
+    }
+
+    private void processInput(String fromUser) {
+        String[] input;
+        
+        if (fromUser.startsWith("!login") || fromUser.startsWith("!steps") || fromUser.startsWith("!addStep") || fromUser.startsWith("!removeStep") || fromUser.startsWith("!bill") || fromUser.startsWith("!logout")) {
+            //talk to billing server
+            if (billingService == null) {
+                input = fromUser.split(" ");
+                if (input.length == 3) {
+                    try {
+                        billingService = billingLogin.login(input[1], input[2]);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    System.out.println("Please login! Usage: !login <username> <pw>");
+                }
+
+            } else {
+                if (fromUser.equals("!logout")) {
+                    billingService = null;
+                } else if (fromUser.equals("!steps")) {
+                    System.out.println(billingService.getPriceSteps().toString());
+                } else if (fromUser.startsWith("!addStep")) {
+                    input = fromUser.split(" ");
+                    if (input.length == 5) {
+                        try {
+                            try {
+                                billingService.createPriceStep(Double.parseDouble(input[1]), Double.parseDouble(input[2]), Double.parseDouble(input[3]), Double.parseDouble(input[4]));
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Usage: !addStep <startPrice> <endPrice> <fixedPrice> <variablePricePercent>");
+                        }
+                    } else {
+                        System.out.println("Usage: !addStep <startPrice> <endPrice> <fixedPrice> <variablePricePercent>");
+
+                    }
+                } else if (fromUser.startsWith("!removeStep")) {
+                    input = fromUser.split(" ");
+                    if (input.length == 3) {
+                        try {
+                            try {
+                                billingService.deletePriceStep(Double.parseDouble(input[1]), Double.parseDouble(input[2]));
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Usage: !removeStep <startPrice> <endPrice>");
+                        }
+                    } else {
+                        System.out.println("Usage: !removeStep <startPrice> <endPrice>");
+                    }
+                } else if (fromUser.startsWith("!bill")) {
+                    input = fromUser.split(" ");
+                    if (input.length == 2) {
+                        try {
+                            try {
+                                System.out.append(billingService.getBill(input[1]).toString());
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Usage: !bill <userName>");
+                        }
+                    } else {
+                        System.out.println("Usage: !bill <userName>");
+                    }
+                } else {
+                    System.out.println("Unknown Command");
+                }
+
+            }
+        } else if (fromUser.startsWith("!subscribe")) {
+            input = fromUser.split(" ");
+            if (input.length == 2) {
+                try {
+                    String id = analyticsService.subscribe(input[1], (IManagementClientCallback) this);
+                    System.out.println("Created subscription with ID " + id + " for events using '" + input[1] + "'");
+
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                System.out.println("Usage: !subscribe <filterRegex>");
+            }
+        } else if (fromUser.startsWith("!unsubscribe")) {
+            input = fromUser.split(" ");
+            if (input.length == 2) {
+                try {
+                    analyticsService.unsubscribe(input[1]);
+                    System.out.println("subscription " + input[1] + " terminated");
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                System.out.println("Usage: !unsubscribe <id>");
+            }
+
+        } else if (fromUser.equals("!auto")) {
+            //TODO
+        } else if (fromUser.equals("!hide")) {
+            //TODO
+        } else if (fromUser.equals("!print")) {
+            //TODO
+        } else {
+            System.out.println("Unknown Command");
+        }
+
     }
 
     public String getAnalyticsBindingName() {
@@ -219,7 +242,11 @@ public class ManagementClient implements IManagementClientCallback, Serializable
     }
 
     public void receiveEvent(Event event) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (printEvents) {
+            System.out.println(event);
+        } else {
+            storedMessages += event;
+        }
     }
 
     public String getID() {
