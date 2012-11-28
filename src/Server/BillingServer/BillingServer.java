@@ -1,5 +1,6 @@
 package Server.BillingServer;
 
+import Common.IBillingSecure;
 import PropertyReader.RegistryProperties;
 import Server.AnalyticsServer.AnalyticsServer;
 import java.rmi.Remote;
@@ -34,6 +35,7 @@ public class BillingServer {
     public void start(String bindingName) {
 
         try {
+        	
             login = new BillingLogin(new BillingSecure(new BillingServerSecure()));
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
             System.out.println("get registry: host " + host + " port " + port);

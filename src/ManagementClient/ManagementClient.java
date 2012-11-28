@@ -88,7 +88,8 @@ public class ManagementClient implements IManagementClientCallback {
         IBillingSecure secure = null;
         try {
 			 secure = billingLogin.login("john", "dslab2012");
-			 secure.createPriceStep(0, 100, 10, 3);
+			 secure.createPriceStep(10, 20, 10, 3);
+			 System.out.println(secure.getPriceSteps());
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

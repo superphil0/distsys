@@ -8,7 +8,7 @@ import Server.BillingServer.PriceStep;
 import Server.BillingServer.PriceSteps;
 
 public interface IBillingSecure extends Remote{
-	PriceSteps getPriceSteps();
+	PriceSteps getPriceSteps() throws RemoteException;
 
 	 
 	void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException;
@@ -17,7 +17,7 @@ public interface IBillingSecure extends Remote{
 	void deletePriceStep(double startPrice, double endPrice) throws RemoteException;
 
 	
-	void billAuction(String user, long auctionID, double price);
+	void billAuction(String user, long auctionID, double price) throws RemoteException;
 
 	Bill getBill(String user) throws RemoteException;
 

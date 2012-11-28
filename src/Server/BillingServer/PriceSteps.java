@@ -1,8 +1,13 @@
 package Server.BillingServer;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class PriceSteps {
+public class PriceSteps implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LinkedList<PriceStep> priceSteps;
 	
 	public PriceSteps()
@@ -17,6 +22,7 @@ public class PriceSteps {
 	boolean addPriceStep(PriceStep step)
 	{
 		if(priceSteps.contains(step) || !step.checkValid()) return false;
+		priceSteps.add(step);
 		return true;
 	}
 	

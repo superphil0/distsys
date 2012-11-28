@@ -20,7 +20,7 @@ public class BillingServerSecure implements IBillingSecure {
 		bills = new Bills(priceSteps);
 	}
 
-	public PriceSteps getPriceSteps()
+	public PriceSteps getPriceSteps() throws RemoteException
 	{
 		return priceSteps;
 		
@@ -33,6 +33,7 @@ public class BillingServerSecure implements IBillingSecure {
 		{
 			throw new RemoteException("Could not add PriceStep because it already exists or it is invalid: " + step);
 		}
+	
 	}
 	
 	public void deletePriceStep(double startPrice, double endPrice) throws RemoteException
@@ -44,7 +45,7 @@ public class BillingServerSecure implements IBillingSecure {
 }
 
 
-public void billAuction(String user, long auctionID, double price)
+public void billAuction(String user, long auctionID, double price) throws RemoteException
 {
 	bills.storeBill(user, auctionID, price);
 }
