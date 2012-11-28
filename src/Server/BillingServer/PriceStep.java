@@ -17,7 +17,7 @@ public class PriceStep implements Comparable<PriceStep>,Serializable{
 			double variablePricePercent) {
 		startPrice = startPrice2;
 		if(endPrice2 == 0.0) endPrice = Double.POSITIVE_INFINITY;
-		endPrice = endPrice2;
+		else endPrice = endPrice2;
 		
 		this.fixedPrice = fixedPrice;
 		this.variablePrice = fixedPrice;

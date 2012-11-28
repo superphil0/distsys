@@ -2,6 +2,11 @@ package Server.BillingServer;
 
 import PropertyReader.RegistryProperties;
 import Server.AnalyticsServer.AnalyticsServer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -10,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.rmi.registry.LocateRegistry;
+
+import sun.util.BuddhistCalendar;
 
 public class BillingServer {
 
@@ -32,10 +39,10 @@ public class BillingServer {
     }
 
     public void start(String bindingName) {
-
+    	BillingServerSecure billingSecure = null;	
         try {
-        	
-            login = new BillingLogin(new BillingServerSecure());
+        	billingSecure = new BillingServerSecure();
+            login = new BillingLogin(billingSecure);
             remoteBillingServer = UnicastRemoteObject.exportObject(login, 0);
             System.out.println("get registry: host " + host + " port " + port);
 
@@ -46,6 +53,30 @@ public class BillingServer {
                 Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
             
         }
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        try {
+			while(!in.readLine().startsWith("!exit"));
+			System.out.println("Server exit");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			
+			rmiRegistry.unbind(bindingName);
+			UnicastRemoteObject.unexportObject(login, false);
+			UnicastRemoteObject.unexportObject(billingSecure, false);
+			
+			
+		}
+		catch (RemoteException ex)
+		{
+			
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	
 
 
 
