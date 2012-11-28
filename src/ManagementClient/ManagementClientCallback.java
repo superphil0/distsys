@@ -29,7 +29,7 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
     }
 
     public void receiveEvent(Event event) throws RemoteException {
-        String output = event.getType() + " " + event.getTimestamp() + " - ";
+        String output = event.getType() + " " + new Date(event.getTimestamp()) + " - ";
 
         if (event != null) {
             if (event instanceof AuctionEvent) {

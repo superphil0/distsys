@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Subscription implements Runnable {
 
     private String id;
-    private static long counter = 0;
+    private static long counter = 1;
     private IManagementClientCallback callbackObject;
     private String filter;
     private Event event;

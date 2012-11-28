@@ -6,20 +6,10 @@ package Protocol;
 
 import Auction.Auction;
 import Auction.AuctionHandler;
-import Common.IAnalytics;
-import Events.AuctionEvent;
-import Events.UserEvent;
 import PropertyReader.RegistryProperties;
 import Server.ServerThread;
 import User.User;
 import User.UserHandler;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -208,7 +198,7 @@ public class CommandProtocol {
             for (Auction a : auctionHandler.getAllAuctions().values()) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
-                    a.getHighestBidder().getUsername();
+                    highestBidder = a.getHighestBidder().getUsername();
                 }
                 list += a.getId() + ". '" + a.getDescription() + "' " + a.getOwner().getUsername()
                         + " " + a.getEndDate() + " " + a.getHighestBid()
