@@ -5,6 +5,7 @@
 package Common;
 
 import Events.Event;
+import java.io.Serializable;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -17,6 +18,6 @@ public interface IManagementClientCallback extends Remote{
     
     public void receiveEvent(Event event) throws RemoteException;
     
-    public String getID();
+    //public String getID();
     
 }

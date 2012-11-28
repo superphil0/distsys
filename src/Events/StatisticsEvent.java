@@ -17,5 +17,10 @@ public class StatisticsEvent extends Event{
         super(type, timestamp);
         this.value = value;
     }
+
+    public double getValue() {
+        return value;
+    }
+    
     
 }

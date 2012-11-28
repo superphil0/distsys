@@ -35,9 +35,10 @@ public class Subscription implements Runnable {
 
     public synchronized void sendEvent(Event event) {
         this.event = event;
-        if (checkEvent() && event != null) {
+        /*if (checkEvent() && event != null) {
             server.addTask(this);
-        }
+        }*/
+        run();
     }
 
     private boolean checkEvent() {
