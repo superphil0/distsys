@@ -38,7 +38,7 @@ public class AuctionServer extends Thread {
 
     public AuctionServer(int port, String analyticsBindingName, String billingBindingName) {
 
-        this.port = port;
+        AuctionServer.port = port;
         serverList = new ArrayList<ServerThread>();
         this.analyticsBindingName = analyticsBindingName;
         this.billingBindingName = billingBindingName;
@@ -47,8 +47,10 @@ public class AuctionServer extends Thread {
         try {
             rmiRegistry = LocateRegistry.getRegistry(RegistryProperties.getHost(), RegistryProperties.getPort());
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
-            AuctionHandler.getInstance().setAS(analyticsService);
-            UserHandler.getInstance().setAS(analyticsService);
+            AuctionHandler.getInstance();
+			AuctionHandler.setAS(analyticsService);
+            UserHandler.getInstance();
+			UserHandler.setAS(analyticsService);
 
         } catch (NotBoundException ex) {
             Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
