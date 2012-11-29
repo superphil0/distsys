@@ -47,7 +47,7 @@ public class AnalyticsServer implements IAnalytics {
      * @throws RemoteException
      */
     public static void main(String[] args) throws RemoteException {
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
         AnalyticsServer server = new AnalyticsServer();
         if (args.length == 1) {
             server.setBindingName(args[0]);

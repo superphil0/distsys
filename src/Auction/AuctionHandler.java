@@ -45,11 +45,9 @@ public class AuctionHandler {
     }
 
     public synchronized void endAuction(Auction a) {
-        String bidder = "Nobody";
-        String end = "The auction " + a.getId() + " '" + a.getDescription() + "' has ended. ";
-
         if (a.getHighestBidder() != null) {
-            bidder = a.getHighestBidder().getUsername();
+
+            String bidder = a.getHighestBidder().getUsername();
             try {
 
                 analyticsService.processEvent(new BidEvent("BID_WON", new Date().getTime(), bidder, a.getId(), a.getHighestBid()));
@@ -58,6 +56,7 @@ public class AuctionHandler {
             }
 
             //a.getHighestBidder().receiveNotification(end + " You won with " + a.getHighestBid());
+
         }
         //notify owner
         //a.getOwner().receiveNotification(end + bidder + " has won with " + a.getHighestBid());

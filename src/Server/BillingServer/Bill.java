@@ -1,8 +1,13 @@
 package Server.BillingServer;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Bill {
+public class Bill implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LinkedList<BillEntry> auctions;
 	private PriceSteps steps;
 	public Bill(PriceSteps priceSteps)
@@ -23,6 +28,7 @@ public class Bill {
 	@Override
 	public String toString() 
 	{
+		if(auctions == null) return "";
 		String ret = "auction_ID\tstrike_price\tfee_fixed\tfee_variable\n";
 		synchronized(auctions)
 		{

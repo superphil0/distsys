@@ -1,8 +1,5 @@
 package PropertyReader;
 
-
-import java.io.IOException;
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -17,9 +14,11 @@ public class RegistryProperties extends PropertyReader{
     private static String host;
     private static int port;
     private static String path = "registry.properties";
+
     //private RegistryProperties registryProperties = new RegistryProperties(); 
     
     public RegistryProperties() {
+
         super(path);
         host = props.getProperty("registry.host");
         port = Integer.parseInt(props.getProperty("registry.port"));

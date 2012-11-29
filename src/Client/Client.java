@@ -8,9 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -23,11 +20,8 @@ public class Client {
     private static Socket socket = null;
     private static PrintWriter out = null;
     private static BufferedReader in = null;
-    private static InetAddress address = null;
-    private static DatagramSocket dataSocket = null;
-    private static DatagramPacket packet = null;
     private static String host = "";
-    private static int tcpPort, udpPort;
+    private static int tcpPort;
     private static BufferedReader stdIn;
     private static boolean ok = false;
 

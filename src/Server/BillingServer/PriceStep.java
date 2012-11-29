@@ -1,6 +1,12 @@
 package Server.BillingServer;
 
-public class PriceStep implements Comparable<PriceStep>{
+import java.io.Serializable;
+
+public class PriceStep implements Comparable<PriceStep>,Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private double startPrice;
 	private double endPrice;
 	private double fixedPrice;
@@ -11,7 +17,7 @@ public class PriceStep implements Comparable<PriceStep>{
 			double variablePricePercent) {
 		startPrice = startPrice2;
 		if(endPrice2 == 0.0) endPrice = Double.POSITIVE_INFINITY;
-		endPrice = endPrice2;
+		else endPrice = endPrice2;
 		
 		this.fixedPrice = fixedPrice;
 		this.variablePrice = fixedPrice;
