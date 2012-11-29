@@ -10,6 +10,10 @@ import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import PropertyReader.RegistryProperties;
 import Common.IManagementClientCallback;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -89,6 +93,33 @@ public class AnalyticsServer implements IAnalytics {
             }
         }
 
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            while (!in.readLine().startsWith("!exit"));
+            System.out.println("Server exit");
+            close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            // e.printStackTrace();
+        }
+
+    }
+
+    private void close() {
+        try {
+
+            rmiRegistry.unbind(bindingName);
+            UnicastRemoteObject.unexportObject(this, false);
+
+        } catch (RemoteException ex) {
+            System.out.println("ex");
+        } catch (NotBoundException e) {
+            // TODO Auto-generated catch block
+            // e.printStackTrace();
+            System.out.println("nbe");
+
+        }
     }
 
     public void setBindingName(String bindingName) {
