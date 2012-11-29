@@ -68,10 +68,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
         //throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    /*public void setCallbackObject(IManagementClientCallback callback) {
-     //this.callback = callback;
-     }
-     */
+
     private void close() {
         billingService = null;
         billingLogin = null;
@@ -117,25 +114,14 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
     }
 
     private void start() {
-        mySubscriptions = new ArrayList();
+        mySubscriptions = new ArrayList<String>();
         
         openConnection();
         
-       /* if(subscribeAll) {
-            try {
-                analyticsService.subscribe("(USER_.*)|(BID_.*)|(AUCTION_.*)", callback);
-            } catch (RemoteException ex) {
-                Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }*/
         
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
-        /*try {
-         System.out.println(analyticsService.subscribe("blubb", callback));
-         } catch (RemoteException ex) {
-         Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-         }*/
+
 
 
         try {
