@@ -193,7 +193,11 @@ public class CommandProtocol {
     private String listAuctions() {
         String list = "", highestBidder;
         if (auctionHandler.hasAuctions()) {
+        	synchronized (auctionHandler) {
+				
+			
         	Collection<Auction> auctions = auctionHandler.getAllAuctions().values();
+        	
             for (Auction a : auctions ) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
@@ -203,6 +207,7 @@ public class CommandProtocol {
                         + " " + a.getEndDate() + " " + a.getHighestBid()
                         + " " + highestBidder + "\n";
             }
+        	}
         }
         if (list.isEmpty()) {
             list = "There are no Auctions.";

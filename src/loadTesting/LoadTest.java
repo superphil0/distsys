@@ -82,7 +82,7 @@ public class LoadTest {
 			}
 			t = new TestClient(this, socket, timeServerStart, i, new TestArgs(bidsPerMin, auctionsPerMin, auctionDuration, updateIntervalSec,clients),executer);
 			clientList.add(t);
-			System.out.println("starting thread " + i);
+			//System.out.println("starting thread " + i);
 			synchronized (executer) {
 				executer.execute(t);
 			}
