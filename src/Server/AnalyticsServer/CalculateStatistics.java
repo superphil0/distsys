@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author daniela
  */
-public class CalculateStatistics implements Runnable {
+public class CalculateStatistics { //implements Runnable {
 
     private AnalyticsServer server;
     private Event event;
@@ -39,21 +39,18 @@ public class CalculateStatistics implements Runnable {
         serverStarttime = server.getStarttime();
     }
 
-    public void calculate(Event event) {
+    public synchronized void calculate(Event event) {
         this.event = event;
-        //System.out.println("calcevent vorhanden " + event != null);
-        run();
-/*        CalculateStatistics task = new CalculateStatistics(server);
-        task.setEvent(event);
-        server.addTask(task);
-        */
+        
+        run(event);
+
     }
     
     public void setEvent(Event event) {
         this.event = event;
     }
 
-    public void run() {
+    public void run(Event event) {
 
         if (event != null) {
             if (event.getClass() == AuctionEvent.class) {

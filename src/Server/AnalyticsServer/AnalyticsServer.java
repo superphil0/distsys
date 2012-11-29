@@ -144,9 +144,8 @@ public class AnalyticsServer implements IAnalytics {
         //TODO calculate statistics
         //if event !instanceof StatisticsEvent
 
-        //System.out.println("event " + event.getType());
         calculator.calculate(event);
-        //send Event to all subscribers, they decide whether they need it or not
+        //send Event to all subscribscriptions, the regex filter decide whether they need it or not
         for (Subscription subscription : subscriptions.values()) {
             subscription.sendEvent(event);
         }
@@ -157,9 +156,6 @@ public class AnalyticsServer implements IAnalytics {
         if (subscriptions.containsKey(id)) {
             subscriptions.remove(id);
         }
-        /*for (Subscription subscription : subscriptions.values()) {
-         System.out.println("active subs " + subscription.getID());
-         }*/
     }
 
     public long getStarttime() {
