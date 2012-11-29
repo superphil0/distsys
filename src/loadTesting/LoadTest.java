@@ -47,6 +47,9 @@ public class LoadTest {
 	
 	private void run()
 	{
+            TestManagementClient tmc = new TestManagementClient();
+            
+            
 		executer = Executors.newCachedThreadPool();
 		Socket socket = null;
 		String host = "localhost";
