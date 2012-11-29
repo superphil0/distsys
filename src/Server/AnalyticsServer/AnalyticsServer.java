@@ -19,6 +19,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 /**
  *
  * @author daniela
@@ -96,8 +99,13 @@ public class AnalyticsServer implements IAnalytics {
 
         Subscription newSubscription = new Subscription(filter, callbackObject, this);
         String id = newSubscription.getID();
-        subscriptions.put(id, newSubscription);
-        return id;
+        try {
+            Pattern.compile(filter);
+            subscriptions.put(id, newSubscription);
+            return id;
+        } catch (PatternSyntaxException ex) {
+            return "invalid filter";
+        }
 
     }
 
@@ -105,7 +113,7 @@ public class AnalyticsServer implements IAnalytics {
         //TODO calculate statistics
         //if event !instanceof StatisticsEvent
 
-        System.out.println("event " + event.getType());
+        //System.out.println("event " + event.getType());
         calculator.calculate(event);
         //send Event to all subscribers, they decide whether they need it or not
         for (Subscription subscription : subscriptions.values()) {

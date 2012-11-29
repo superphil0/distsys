@@ -156,6 +156,11 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                 if (input.length == 3) {
                     try {
                         billingService = billingLogin.login(input[1], input[2]);
+                        if(billingService != null){ 
+                            System.out.println("Successfully logged in as " + input[1]);
+                        } else {
+                            System.out.println("Wrong username or password, please try again.");
+                        }
                     } catch (RemoteException ex) {
                         Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -211,6 +216,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                             try {
                                 System.out.append(billingService.getBill(input[1]).toString());
                             } catch (RemoteException ex) {
+                                System.out.println("No Entries for this User.");
                                 Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         } catch (NumberFormatException ex) {

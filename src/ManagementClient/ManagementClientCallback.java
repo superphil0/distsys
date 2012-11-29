@@ -71,14 +71,14 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
             } else if (event instanceof StatisticsEvent) {
                 StatisticsEvent statisticsEvent = (StatisticsEvent) event;
 
-                if (statisticsEvent.getType().equals("USER_SESSIONTIME_MIN")) {
-                    output += "minimum session time is " + (int) statisticsEvent.getValue() + " seconds";
+                if (statisticsEvent.getType().equals("USER_SESSION_TIME_MIN")) {
+                    output += "minimum session time is " + (int) statisticsEvent.getValue()/1000 + " seconds";
 
-                } else if (statisticsEvent.getType().equals("USER_SESSIONTIME_MAX")) {
-                    output += "maximum session time is " + (int) statisticsEvent.getValue() + " seconds";
+                } else if (statisticsEvent.getType().equals("USER_SESSION_TIME_MAX")) {
+                    output += "maximum session time is " + (int) statisticsEvent.getValue()/1000 + " seconds";
 
-                } else if (statisticsEvent.getType().equals("USER_SESSIONTIME_AVG")) {
-                    output += "average session time is " + (int) statisticsEvent.getValue() + " seconds";
+                } else if (statisticsEvent.getType().equals("USER_SESSION_TIME_AVG")) {
+                    output += "average session time is " + (int) statisticsEvent.getValue()/1000 + " seconds";
 
                 } else if (statisticsEvent.getType().equals("BID_PRICE_MAX")) {
                     output += "maximum bid price seen so far is " + statisticsEvent.getValue();
@@ -87,7 +87,7 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
                     output += "current bids per minute is " + statisticsEvent.getValue();
 
                 } else if (statisticsEvent.getType().equals("AUCTION_TIME_AVG")) {
-                    output += "average auction time is " + (int) statisticsEvent.getValue() + " seconds";
+                    output += "average auction time is " + (int) statisticsEvent.getValue()/1000 + " seconds";
 
                 } else if (statisticsEvent.getType().equals("AUCTION_SUCCESS_RATIO")) {
                     output += "auction success ratio is " + statisticsEvent.getValue();
