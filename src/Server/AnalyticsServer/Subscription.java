@@ -9,22 +9,27 @@ import Common.IManagementClientCallback;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  *
  * @author daniela
  */
-public class Subscription implements Runnable {
+public class Subscription {//implements Runnable {
 
     private String id;
     private static long counter = 1;
     private IManagementClientCallback callbackObject;
     private Event event;
     private AnalyticsServer server;
+    private String filter;
 
     public Subscription(String filter, IManagementClientCallback callbackObject, AnalyticsServer server) {
         this.callbackObject = callbackObject;
         id = String.valueOf(counter++);
+        this.filter = filter;
     }
 
     public String getID() {
@@ -34,17 +39,37 @@ public class Subscription implements Runnable {
     public synchronized void sendEvent(Event event) {
         this.event = event;
         /*if (checkEvent() && event != null) {
-            server.addTask(this);
-        }*/
-        run();
+         server.addTask(this);
+         }*/
+        if (checkFilter()){//checkEvent(event)) {
+            send();
+        }
     }
 
-    private boolean checkEvent() {
-        //TODO check regex
-        return true;
+    private boolean checkFilter() {
+
+        //check regex
+
+        String type = event.getType();
+
+        Matcher matcher = null;
+        Pattern pattern = null;
+
+        try {
+            pattern = Pattern.compile(filter);
+            matcher = pattern.matcher(type);
+        } catch (PatternSyntaxException ex) {
+            return false;
+        }
+
+        if (matcher.matches()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void run() {
+    public void send() {
         try {
             callbackObject.receiveEvent(event);
         } catch (RemoteException ex) {

@@ -53,11 +53,12 @@ public class AuctionServer extends Thread {
 			UserHandler.setAS(analyticsService);
 
         } catch (NotBoundException ex) {
-            Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Couldn't connect to analytics server.");
+            //Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (AccessException ex) {
-            Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
-            Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(AuctionServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 

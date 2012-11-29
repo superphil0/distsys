@@ -29,7 +29,7 @@ public class CalculateStatistics implements Runnable {
     //<UserName, Timestamp>
     private static HashMap<String, Long> userList = new HashMap<String, Long>();
     private static long serverStarttime;
-    private static int userCounter = 0, auctionCounter = 0, bidCount = 0, successfulAuctions = 0;
+    private static int userCounter = 0, auctionCounter = 0, bidCount = 0, successfulAuctions = 0, endedAuctions = 0;
     private static long userSessiontimeSum = 0, auctionTimeSum = 0;
     private static long sessiontimeMin = Long.MAX_VALUE, sessiontimeMax = 0, sessiontimeAvg = 0;
     private static double bidPriceMax = 0, bidCountPerMinute = 0;
@@ -68,8 +68,9 @@ public class CalculateStatistics implements Runnable {
                         long auctionStarttime = auctionList.get(auctionEvent.getAuctionID());
                         long currentAuctionTime = auctionEvent.getTimestamp() - auctionStarttime;
                         auctionTimeSum += currentAuctionTime;
+                        endedAuctions ++;
 
-                        long auctionTimeAvg = auctionTimeSum / auctionCounter;
+                        long auctionTimeAvg = auctionTimeSum / endedAuctions;
                         server.processEvent(new StatisticsEvent("AUCTION_TIME_AVG", new Date().getTime(), auctionTimeAvg));
                     } catch (RemoteException ex) {
                         Logger.getLogger(CalculateStatistics.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,6 +122,7 @@ public class CalculateStatistics implements Runnable {
 
                 } else if (userEvent.getType().equals("USER_LOGOUT") || userEvent.getType().equals("USER_DISCONNECTED")) {
 
+                    System.out.println("user " + userEvent.getUserName() +" logout - login timestamp " + userList.get(userEvent.getUserName()));
                     long currentSessiontime = userEvent.getTimestamp() - userList.get(userEvent.getUserName());
                     userSessiontimeSum += currentSessiontime;
                     userCounter++;

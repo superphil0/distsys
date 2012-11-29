@@ -156,6 +156,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                 if (input.length == 3) {
                     try {
                         billingService = billingLogin.login(input[1], input[2]);
+                        System.out.println("Successfully logged in as " + input[1]);
                     } catch (RemoteException ex) {
                         Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
