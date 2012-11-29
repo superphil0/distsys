@@ -63,6 +63,7 @@ public class AnalyticsServer implements IAnalytics {
      * @param task
      */
     public void addTask(Runnable task) {
+        System.out.println("task vorhanden " + task != null);
         executer.execute(task);
     }
 
@@ -104,6 +105,7 @@ public class AnalyticsServer implements IAnalytics {
         //TODO calculate statistics
         //if event !instanceof StatisticsEvent
 
+        System.out.println("event " + event.getType());
         calculator.calculate(event);
         //send Event to all subscribers, they decide whether they need it or not
         for (Subscription subscription : subscriptions.values()) {

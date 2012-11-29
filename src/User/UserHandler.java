@@ -4,8 +4,15 @@
  */
 package User;
 
+import Auction.AuctionHandler;
+import Common.IAnalytics;
+import Events.UserEvent;
 import Server.ServerThread;
+import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Singleton - contains a list of all users
@@ -16,6 +23,7 @@ public class UserHandler {
 
     private static UserHandler instance = new UserHandler();
     private static HashMap<String, User> allUsers = new HashMap<String, User>();
+    private static IAnalytics analyticsService;
 
     private UserHandler() {
     }
@@ -36,6 +44,27 @@ public class UserHandler {
     public void logoutAll() {
         for (User u : allUsers.values()) {
             u.logout();
+
+            try {
+                analyticsService.processEvent(new UserEvent("USER_DISCONNECTED", new Date().getTime(), u.getUsername()));
+            } catch (RemoteException ex) {
+                Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void logout(User user) {
+        user.logout();
+        try {
+            analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), user.getUsername()));
+        } catch (RemoteException ex) {
+            Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static synchronized void setAS(IAnalytics as) {
+        if (analyticsService == null) {
+            analyticsService = as;
         }
     }
 
@@ -44,9 +73,16 @@ public class UserHandler {
      * @param username to log in
      * @return true for successful login, false for already logged in
      */
+    /*
+     try {
+     analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), currentUser.getUsername()));
+     } catch (RemoteException ex) {
+     Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     */
     public Boolean login(String username, ServerThread serverThread) {
         //checks if the User already exists
-        if(serverThread == null) {
+        if (serverThread == null) {
             return false;
         }
         if (allUsers.containsKey(username)) {
@@ -55,6 +91,14 @@ public class UserHandler {
                 return false;
             } else {
                 getUser(username).login(serverThread);
+
+                try {
+                    analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
+                } catch (RemoteException ex) {
+                    Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+
                 return true;
             }
             //new User

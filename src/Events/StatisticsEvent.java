@@ -14,5 +14,10 @@ public class StatisticsEvent extends Event{
     public StatisticsEvent(String type, long timestamp, double value) {
         super(type, timestamp);
     }
+
+    public double getValue() {
+        return value;
+    }
+    
     
 }

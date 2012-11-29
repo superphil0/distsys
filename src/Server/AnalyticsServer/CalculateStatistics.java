@@ -41,7 +41,16 @@ public class CalculateStatistics implements Runnable {
 
     public void calculate(Event event) {
         this.event = event;
-        server.addTask(this);
+        //System.out.println("calcevent vorhanden " + event != null);
+        run();
+/*        CalculateStatistics task = new CalculateStatistics(server);
+        task.setEvent(event);
+        server.addTask(task);
+        */
+    }
+    
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public void run() {
