@@ -72,7 +72,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
      }*/
     private void start() {
         mySubscriptions = new ArrayList();
-
+        
         try {
             ManagementClientCallback mcc = new ManagementClientCallback(this);
             callback = (IManagementClientCallback) UnicastRemoteObject.exportObject(mcc, 0);
@@ -84,6 +84,9 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
 
+            IBillingSecure sec = billingLogin.login("john", "dslab2012");
+            sec.billAuction("john", 1, 2);
+            System.out.println(sec.getBill("john"));
             //TEST
             //System.out.println("blubb: " + analyticsService.subscribe("blubb", callback));
 

@@ -13,6 +13,7 @@ public class AuctionMaker extends LoopedExecuter {
 	protected String getCommand(long timeSinceCreation) {
 		String command = "!create " + auctionDuration + " Thread" + id +"" + 
 		counter;
+		callback.getSyncThread().incrementAuctionCounter();
 		counter++;
 		return command;
 	}
