@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 
@@ -20,8 +21,10 @@ public class TestClient implements Runnable{
 	private long time;
 	private ExecutorService executer;
 	private Thread t;
-	public TestClient(Socket socket, long timeStarted, int id, TestArgs args, ExecutorService executer)
+	private LoadTest test;
+	public TestClient(LoadTest test, Socket socket, long timeStarted, int id, TestArgs args, ExecutorService executer)
 	{
+		this.test = test;
 		this.id = id;
 		this.time = timeStarted;
 		this.socket = socket;
@@ -40,8 +43,8 @@ public class TestClient implements Runnable{
 			e.printStackTrace();
 		}
 		t = null;
-		t = new ClientThreadTCP(socket);
-		t.start();
+//		t = new ClientThreadTCP(socket);
+//		t.start();
 		runCommand("!login Thread"+id);
 		t = new AuctionMaker(id, args.getAuctionsPerMin(), this, args.getAuctionDuration());
 		t.start();
@@ -51,11 +54,31 @@ public class TestClient implements Runnable{
 			protected String getCommand(long timeSinceCreation) {
 				int timeInSeconds= (int ) (timeSinceCreation / 1000);
 				double auctionDistance =  60/args.getAuctionsPerMin(); 
-				int activeAuctions = (int) Math.ceil(timeInSeconds / auctionDistance)
-				- (int ) Math.ceil((timeInSeconds - args.getAuctionDuration())/auctionDistance);
-				System.out.println(activeAuctions + " active auctions now");
+				int endedAuctions = (int)((timeInSeconds - args.getAuctionDuration()) / auctionDistance +1) * args.getClients();
+				int activeAuctions=0;
+				int globalId = callback.getSyncThread().getAuctionCounter();
+				if(endedAuctions < 0 ) 
+				{
+					endedAuctions = 0;
+				}
+
+				activeAuctions = globalId - endedAuctions;
+		
+				//System.out.println(activeAuctions + " active auctions now glbId = "+globalId+ " ended: " +endedAuctions);
+				int rand = random.nextInt(activeAuctions+1) ;
+
 				// alle gestarteten - allen beendeten auktionen  = alle aktiven
-				//String command = "!bid " + aucId + " " + timeSinceCreation;
+				String command = "!bid " + (endedAuctions +rand) + " " + timeSinceCreation;
+				return command;
+			}
+		};
+		t.start();
+		
+		t = new LoopedExecuter(id, (int) 60/args.getUpdateIntervalSec(), this) {
+			
+			@Override
+			protected String getCommand(long timeSinceCreation) {
+				
 				return "!list";
 			}
 		};
@@ -68,14 +91,17 @@ public class TestClient implements Runnable{
 	
 	public void runCommand(String command)
 	{
-		System.out.println(command);
+		//System.out.println(command);
 		synchronized (executer) {
 			t = new OutputThread(command, out);
-			t.start();
+			executer.execute(t);
 		}
 		
 	}
-	
+	public LoadTest getSyncThread()
+	{
+		return test;
+	}
 	public void stop()
 	{
 		this.running = false;
