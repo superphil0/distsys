@@ -113,6 +113,12 @@ public class AnalyticsServer implements IAnalytics {
         }
 
     }
+    
+    private boolean checkFilter(Event event, Subscription subscription) {
+        
+        
+        return true;
+    }
 
     public void unsubscribe(String id) throws RemoteException {
         if (subscriptions.containsKey(id)) {
