@@ -4,6 +4,8 @@
  */
 package Protocol;
 
+import java.util.Collection;
+
 import Auction.Auction;
 import Auction.AuctionHandler;
 import PropertyReader.RegistryProperties;
@@ -17,9 +19,6 @@ import User.UserHandler;
  */
 public class CommandProtocol {
 
-    private static final int LOGGED_OUT = 0;
-    private static final int LOGGED_IN = 1;
-    private int state = LOGGED_OUT;
     private User currentUser = null;
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;
@@ -196,7 +195,8 @@ public class CommandProtocol {
     private String listAuctions() {
         String list = "", highestBidder;
         if (auctionHandler.hasAuctions()) {
-            for (Auction a : auctionHandler.getAllAuctions().values()) {
+        	Collection<Auction> auctions = auctionHandler.getAllAuctions().values();
+            for (Auction a : auctions ) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
                     highestBidder = a.getHighestBidder().getUsername();

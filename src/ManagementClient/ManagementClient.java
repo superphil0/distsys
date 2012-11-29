@@ -167,7 +167,12 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                 if (fromUser.equals("!logout")) {
                     billingService = null;
                 } else if (fromUser.equals("!steps")) {
-                    System.out.println(billingService.getPriceSteps().toString());
+                    try {
+						System.out.println(billingService.getPriceSteps().toString());
+					} catch (RemoteException e) {
+						// TODO Handle error
+						e.printStackTrace();
+					}
                 } else if (fromUser.startsWith("!addStep")) {
                     input = fromUser.split(" ");
                     if (input.length == 5) {
