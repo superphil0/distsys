@@ -64,12 +64,26 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
 
     }
 
-    /*public void setCallbackObject(IManagementClientCallback callback) {
-     //this.callback = callback;
-     }*/
-    private void start() {
-        mySubscriptions = new ArrayList<String>();
+    private ManagementClient() {
+        //throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+
+    private void close() {
+        billingService = null;
+        billingLogin = null;
+        rmiRegistry =null;
+        analyticsService = null;
+        callback = null;
+        try {
+            stdIn.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
+    }
+    
+    private void openConnection() {
         try {
             ManagementClientCallback mcc = new ManagementClientCallback(this);
             callback = (IManagementClientCallback) UnicastRemoteObject.exportObject(mcc, 0);
@@ -80,21 +94,6 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
 
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
-
-            IBillingSecure sec = billingLogin.login("john", "dslab2012");
-            sec.billAuction("john", 1, 2);
-            System.out.println(sec.getBill("john"));
-            //TEST
-            //System.out.println("blubb: " + analyticsService.subscribe("blubb", callback));
-
-            /*System.out.println(analyticsService.subscribe("blubb", this));
-             System.out.println(analyticsService.subscribe("blubb", this));
-             System.out.println(analyticsService.subscribe("blubb", this));
-            
-             analyticsService.unsubscribe("1");
-             analyticsService.unsubscribe("2");
-            
-             */
 
 
         } catch (AccessException ex) {
@@ -112,13 +111,17 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
             System.out.println("billingLogin: " + billingBindingName);
         }
 
+    }
+
+    private void start() {
+        mySubscriptions = new ArrayList<String>();
+        
+        openConnection();
+        
+        
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
-        /*try {
-         System.out.println(analyticsService.subscribe("blubb", callback));
-         } catch (RemoteException ex) {
-         Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-         }*/
+
 
 
         try {
@@ -132,20 +135,12 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
             System.err.println("I/O Fehler");
         } finally {
             System.out.println("Bye.");
+            close();
         }
 
 
     }
 
-    /*private boolean kommSchon(String userIn) {
-     try {
-     String id = analyticsService.subscribe("blubb", (IManagementClientCallback) this);
-     System.out.println(id);
-     } catch (RemoteException ex) {
-     Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     return true;
-     }*/
     private void processInput(String fromUser) {
         String[] input;
 
@@ -156,7 +151,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                 if (input.length == 3) {
                     try {
                         billingService = billingLogin.login(input[1], input[2]);
-                        if(billingService != null){ 
+                        if (billingService != null) {
                             System.out.println("Successfully logged in as " + input[1]);
                         } else {
                             System.out.println("Wrong username or password, please try again.");
@@ -173,11 +168,11 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                     billingService = null;
                 } else if (fromUser.equals("!steps")) {
                     try {
-						System.out.println(billingService.getPriceSteps().toString());
-					} catch (RemoteException e) {
-						// TODO Handle error
-						e.printStackTrace();
-					}
+                        System.out.println(billingService.getPriceSteps().toString());
+                    } catch (RemoteException e) {
+                        // TODO Handle error
+                        e.printStackTrace();
+                    }
                 } else if (fromUser.startsWith("!addStep")) {
                     input = fromUser.split(" ");
                     if (input.length == 5) {
@@ -236,8 +231,11 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
                 try {
                     String id = analyticsService.subscribe(input[1], (IManagementClientCallback) callback);
                     mySubscriptions.add(id);
+                    if(id.startsWith("invalid")) {
+                        System.out.println("invalid filter");
+                    } else {
                     System.out.println("Created subscription with ID " + id + " for events using '" + input[1] + "'");
-
+                    }
                 } catch (RemoteException ex) {
                     Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
                 }

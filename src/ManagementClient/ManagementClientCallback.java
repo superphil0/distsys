@@ -33,6 +33,11 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
         this.mc = mc;
         received = new ArrayList<String>(10);
     }
+    
+    //send Output to LoadTest
+    public ManagementClientCallback() {
+        received = new ArrayList(10);
+    }
 
     public void receiveEvent(Event event) throws RemoteException {
         String output = event.getType() + " " + new Date(event.getTimestamp()) + " - ";
@@ -99,10 +104,14 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
                 }
 
             }
+            
             received.add(index, event.getID());
             index = (index+1)%10;
-            mc.receiveMessage(output);
-            //System.out.println(output);
+            sendOutput(output);
         }
+    }
+    
+    protected void sendOutput(String output) {
+            mc.receiveMessage(output);
     }
 }

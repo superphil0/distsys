@@ -48,6 +48,11 @@ public class Subscription {//implements Runnable {
     private boolean checkFilter() {
 
         //check regex
+        
+        //* for subscribe all
+        if(filter.equals("*")) {
+            return true;
+        }
 
         String type = event.getType();
 
