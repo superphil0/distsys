@@ -12,7 +12,12 @@ import ManagementClient.ManagementClientCallback;
  */
 public class TestManagementClient extends ManagementClientCallback {
 
-    public TestManagementClient() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8008659861415306492L;
+
+	public TestManagementClient() {
         super();
         System.out.println("tmc started - test console");
     }

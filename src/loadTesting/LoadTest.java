@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import ManagementClient.ManagementClient;
 import PropertyReader.LoadProperties;
 import PropertyReader.RegistryProperties;
 import java.rmi.AccessException;
@@ -68,7 +67,7 @@ public class LoadTest {
     private void run() {
         
         TestManagementClient tmc = new TestManagementClient();
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
 
         int rport = RegistryProperties.getPort();
         String rhost = RegistryProperties.getHost();
@@ -76,7 +75,7 @@ public class LoadTest {
         try {
             rmiRegistry = LocateRegistry.getRegistry(rhost, rport);
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
-            analyticsService.subscribe("*", tmc);
+            analyticsService.subscribe(".*", tmc);
 
         } catch (NotBoundException ex) {
             Logger.getLogger(LoadTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,15 +98,17 @@ public class LoadTest {
             try {
                 socket = new Socket(host, port);
             } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.out.println("could not connect to server with thread " + i);
+                System.out.println("Exiting.. Please hit enter");
+                break;
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	System.out.println("could not connect to server with thread " + i);
+                System.out.println("Exiting.. Please hit enter");
+                break;
             }
             t = new TestClient(this, socket, timeServerStart, i, new TestArgs(bidsPerMin, auctionsPerMin, auctionDuration, updateIntervalSec, clients), executer);
             clientList.add(t);
-            System.out.println("starting thread " + i);
+            //System.out.println("starting thread " + i);
             synchronized (executer) {
                 executer.execute(t);
             }

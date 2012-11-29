@@ -36,7 +36,7 @@ public class ManagementClientCallback implements IManagementClientCallback, Seri
     
     //send Output to LoadTest
     public ManagementClientCallback() {
-        received = new ArrayList(10);
+        received = new ArrayList<String>(10);
     }
 
     public void receiveEvent(Event event) throws RemoteException {

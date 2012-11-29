@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 public class CalculateStatistics { //implements Runnable {
 
     private AnalyticsServer server;
-    private Event event;
     //<ID, Timestamp>
     private static HashMap<Long, Long> auctionList = new HashMap<Long, Long>();
     private static HashMap<Long, Long> successfulAuctionList = new HashMap<Long, Long>();
@@ -40,14 +39,11 @@ public class CalculateStatistics { //implements Runnable {
     }
 
     public synchronized void calculate(Event event) {
-        this.event = event;
-        
         run(event);
 
     }
     
     public void setEvent(Event event) {
-        this.event = event;
     }
 
     public void run(Event event) {
