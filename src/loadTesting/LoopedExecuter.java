@@ -1,10 +1,13 @@
 package loadTesting;
 
+import java.util.Random;
+
 public abstract class LoopedExecuter extends Thread{
 	protected TestClient callback;
 	protected int id;
 	protected int counter = 0;
 	private int timesPerMin;
+	protected Random random = new Random();
 	public LoopedExecuter(int id, int timesPerMin, TestClient callback)
 	{
 		this.id = id;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 
@@ -20,8 +21,10 @@ public class TestClient implements Runnable{
 	private long time;
 	private ExecutorService executer;
 	private Thread t;
-	public TestClient(Socket socket, long timeStarted, int id, TestArgs args, ExecutorService executer)
+	private LoadTest test;
+	public TestClient(LoadTest test, Socket socket, long timeStarted, int id, TestArgs args, ExecutorService executer)
 	{
+		this.test = test;
 		this.id = id;
 		this.time = timeStarted;
 		this.socket = socket;
@@ -51,11 +54,14 @@ public class TestClient implements Runnable{
 			protected String getCommand(long timeSinceCreation) {
 				int timeInSeconds= (int ) (timeSinceCreation / 1000);
 				double auctionDistance =  60/args.getAuctionsPerMin(); 
+				int endedAuctions = (int ) Math.ceil((timeInSeconds - args.getAuctionDuration())/auctionDistance);
 				int activeAuctions = (int) Math.ceil(timeInSeconds / auctionDistance)
-				- (int ) Math.ceil((timeInSeconds - args.getAuctionDuration())/auctionDistance);
+				-  endedAuctions
+				+ callback.getSyncThread().getAuctionCounter()%args.getClients()+1-args.getClients();
+				int rand = random.nextInt(activeAuctions);
 				System.out.println(activeAuctions + " active auctions now");
 				// alle gestarteten - allen beendeten auktionen  = alle aktiven
-				//String command = "!bid " + aucId + " " + timeSinceCreation;
+				String command = "!bid " + (endedAuctions +rand) + " " + timeSinceCreation;
 				return "!list";
 			}
 		};
@@ -75,7 +81,10 @@ public class TestClient implements Runnable{
 		}
 		
 	}
-	
+	public LoadTest getSyncThread()
+	{
+		return test;
+	}
 	public void stop()
 	{
 		this.running = false;

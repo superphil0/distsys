@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LoadTest {
 	 //ThreadPool
@@ -17,7 +18,7 @@ public class LoadTest {
 	private int auctionDuration;
 	private int updateIntervalSec;
 	private int bidsPerMin;
-    
+    private AtomicInteger counter;
 	public LoadTest(String[] args) {
 		if(args.length != 5 ) 
 		{
@@ -48,6 +49,7 @@ public class LoadTest {
 	private void run()
 	{
 		executer = Executors.newCachedThreadPool();
+		counter = new AtomicInteger();
 		Socket socket = null;
 		String host = "localhost";
 		int port = 13480;
@@ -65,7 +67,7 @@ public class LoadTest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			t = new TestClient(socket, timeServerStart, i, new TestArgs(bidsPerMin, auctionsPerMin, auctionDuration, updateIntervalSec,clients),executer);
+			t = new TestClient(this, socket, timeServerStart, i, new TestArgs(bidsPerMin, auctionsPerMin, auctionDuration, updateIntervalSec,clients),executer);
 			clientList.add(t);
 			synchronized (executer) {
 				executer.execute(t);
@@ -87,6 +89,10 @@ public class LoadTest {
 			}
 		}
 		
+	}
+	public int getAuctionCounter()
+	{
+		return counter.incrementAndGet();
 	}
 
 }
