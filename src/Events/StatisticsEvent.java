@@ -11,8 +11,11 @@ import Events.Event;
  */
 public class StatisticsEvent extends Event{
     
+    private double value;
+    
     public StatisticsEvent(String type, long timestamp, double value) {
         super(type, timestamp);
+        this.value = value;
     }
 
     public double getValue() {
