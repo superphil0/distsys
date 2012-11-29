@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Socket;
 
 /**
@@ -22,20 +24,19 @@ public class ServerThread extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private CommandProtocol cp;
-
     private int udpPort;
-
+    private DatagramSocket dataSocket = null;
+    private DatagramPacket dataPacket = null;
     private byte[] buf;
-    private String analyticsBindingName, billingBindingName;
+    //private String analyticsBindingName, billingBindingName;
 
 
-    public ServerThread(Socket socket, String analyticsBindingName, String billingBindingName) {
-
+    public ServerThread(Socket socket) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
         this.socket = socket;
         
-        this.analyticsBindingName = analyticsBindingName;
-        this.billingBindingName = billingBindingName;
+        //this.analyticsBindingName = analyticsBindingName;
+        //this.billingBindingName = billingBindingName;
         
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -63,7 +64,7 @@ public class ServerThread extends Thread {
                     out.println("Problem with udpPort");
                 }
             }*/
-                    cp = new CommandProtocol(this, analyticsBindingName, billingBindingName);
+                    cp = new CommandProtocol(this); //, analyticsBindingName, billingBindingName);
 
 
             //while Client is sending - answer

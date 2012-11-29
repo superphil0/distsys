@@ -4,13 +4,14 @@
  */
 package Events;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  *
  * @author daniela
  */
-public abstract class Event {
+public abstract class Event  implements Serializable{
     private String id;
     private String type;
     private long timestamp;

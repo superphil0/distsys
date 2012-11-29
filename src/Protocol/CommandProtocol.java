@@ -8,20 +8,10 @@ import java.util.Collection;
 
 import Auction.Auction;
 import Auction.AuctionHandler;
-import Common.IAnalytics;
-import Events.AuctionEvent;
-import Events.UserEvent;
 import PropertyReader.RegistryProperties;
 import Server.ServerThread;
 import User.User;
 import User.UserHandler;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,13 +23,13 @@ public class CommandProtocol {
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;
     private ServerThread serverThread = null;
-    private String analyticsBindingName, billingBindingName;
-    private static Registry rmiRegistry;
+    //private String analyticsBindingName, billingBindingName;
+    //private static Registry rmiRegistry;
     private int port;
     private String host;
-    private IAnalytics analyticsService;
+    //private IAnalytics analyticsService;
 
-    public CommandProtocol(ServerThread serverThread, String analyticsBindingName, String billingBindingName) {
+    public CommandProtocol(ServerThread serverThread) {//, String analyticsBindingName, String billingBindingName) {
         userHandler = UserHandler.getInstance();
         auctionHandler = AuctionHandler.getInstance();
         this.serverThread = serverThread;
@@ -47,10 +37,10 @@ public class CommandProtocol {
         port = RegistryProperties.getPort();
         host = RegistryProperties.getHost();
 
-        this.analyticsBindingName = analyticsBindingName;
-        this.billingBindingName = billingBindingName;
+        //this.analyticsBindingName = analyticsBindingName;
+        //this.billingBindingName = billingBindingName;
 
-        try {
+       /* try {
             rmiRegistry = LocateRegistry.getRegistry(host, port);
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             auctionHandler.setAS(analyticsService);
@@ -59,7 +49,7 @@ public class CommandProtocol {
         } catch (NotBoundException ex) {
             Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
 
-        }
+        }*/
         
 
     }
@@ -90,11 +80,11 @@ public class CommandProtocol {
                         }
                         currentUser = userHandler.getUser(username);
                         strOutput = "Successfully logged in as " + username;
-                        try {
+                        /*try {
                             analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
                         } catch (RemoteException ex) {
                             Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        }*/
                     } else {
                         strOutput = "User " + username + " is already logged in.";
                     }
@@ -112,11 +102,11 @@ public class CommandProtocol {
              * allowed Commands: list create bid logout (state = LOGGED_OUT)
              */
             if (strInput.equals("!end")) {
-                try {
+               /* try {
                     analyticsService.processEvent(new UserEvent("USER_DISCONNECTED", new Date().getTime(), currentUser.getUsername()));
                 } catch (RemoteException ex) {
                     Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
                 currentUser.logout();
                 currentUser = null;
 
@@ -181,12 +171,13 @@ public class CommandProtocol {
 
 
             } else if (strInput.equals("!logout")) {
-                try {
+                /*try {
                     analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), currentUser.getUsername()));
                 } catch (RemoteException ex) {
                     Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                currentUser.logout();
+                }*/
+                userHandler.logout(currentUser);
+                //currentUser.logout();
                 currentUser = null;
                 strOutput = "Successfully logged out.";
 
@@ -208,7 +199,7 @@ public class CommandProtocol {
             for (Auction a : auctions ) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
-                    a.getHighestBidder().getUsername();
+                    highestBidder = a.getHighestBidder().getUsername();
                 }
                 list += a.getId() + ". '" + a.getDescription() + "' " + a.getOwner().getUsername()
                         + " " + a.getEndDate() + " " + a.getHighestBid()

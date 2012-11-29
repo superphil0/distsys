@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Subscription implements Runnable {
 
     private String id;
-    private static long counter = 0;
+    private static long counter = 1;
     private IManagementClientCallback callbackObject;
     private Event event;
     private AnalyticsServer server;
@@ -33,9 +33,10 @@ public class Subscription implements Runnable {
 
     public synchronized void sendEvent(Event event) {
         this.event = event;
-        if (checkEvent() && event != null) {
+        /*if (checkEvent() && event != null) {
             server.addTask(this);
-        }
+        }*/
+        run();
     }
 
     private boolean checkEvent() {

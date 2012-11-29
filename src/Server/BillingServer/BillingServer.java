@@ -53,7 +53,7 @@ public class BillingServer {
 
         } catch (RemoteException ex) {
             try {
-                Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(AnalyticsServer.class.getName()).log(Level.SEVERE, null, ex);
                 rmiRegistry = LocateRegistry.createRegistry(port);
                 rmiRegistry.rebind(bindingName, remoteBillingServer);
                 System.out.println("Registry created on port " + port);
