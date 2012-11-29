@@ -29,7 +29,7 @@ public class ClientThreadTCP extends Thread{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             //While Server is still answering, print message
-            while ((fromServer = in.readLine()) != null){// && !fromServer.isEmpty()) {
+            while ((fromServer = in.readLine()) != null && socket.isConnected()){// && !fromServer.isEmpty()) {
                 System.out.println(fromServer);
             }
             

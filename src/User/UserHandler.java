@@ -105,6 +105,12 @@ public class UserHandler {
         } else {
             allUsers.put(username, new User(username));
             getUser(username).login(serverThread);
+            
+            try {
+                    analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
+                } catch (RemoteException ex) {
+                    Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
             return true;
         }
     }
