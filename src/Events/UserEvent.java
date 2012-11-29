@@ -12,7 +12,11 @@ import Events.Event;
  */
 public class UserEvent extends Event{
     
-    private String userName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1237193793187141421L;
+	private String userName;
     
     public UserEvent(String type, long timestamp, String userName) {
         super(type, timestamp);

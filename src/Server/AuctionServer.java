@@ -10,7 +10,6 @@ import Common.IBillingLogin;
 import Common.IBillingSecure;
 import PropertyReader.RegistryProperties;
 import User.UserHandler;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.AccessException;
@@ -19,8 +18,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This server is listening for clients and starts a thread for each connected
@@ -30,11 +27,9 @@ import java.util.logging.Logger;
  */
 public class AuctionServer extends Thread {
 
-    private static BufferedReader stdIn;
     private static int port;
     private static ServerSocket listeningSocket = null;
     private static ArrayList<ServerThread> serverList;
-    private String analyticsBindingName, billingBindingName;
     private static Registry rmiRegistry;
     private IAnalytics analyticsService;
 	private IBillingLogin billingLogin;
@@ -43,9 +38,7 @@ public class AuctionServer extends Thread {
 
         AuctionServer.port = port;
         serverList = new ArrayList<ServerThread>();
-        this.analyticsBindingName = analyticsBindingName;
-        this.billingBindingName = billingBindingName;
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
 
         try {
             rmiRegistry = LocateRegistry.getRegistry(RegistryProperties.getHost(), RegistryProperties.getPort());

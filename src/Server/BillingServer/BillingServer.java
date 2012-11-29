@@ -1,8 +1,6 @@
 package Server.BillingServer;
 
 import PropertyReader.RegistryProperties;
-import Server.AnalyticsServer.AnalyticsServer;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +14,6 @@ import java.util.logging.Logger;
 
 import java.rmi.registry.LocateRegistry;
 
-import sun.util.BuddhistCalendar;
-
 public class BillingServer {
 
     private BillingLogin login;
@@ -28,7 +24,7 @@ public class BillingServer {
 
     public static void main(String[] args) {
 
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
 
 
         BillingServer server = new BillingServer();

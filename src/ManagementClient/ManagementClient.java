@@ -8,12 +8,10 @@ import Common.IAnalytics;
 import Common.IBillingLogin;
 import Common.IBillingSecure;
 import Common.IManagementClientCallback;
-import Events.Event;
 import PropertyReader.RegistryProperties;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -21,7 +19,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,11 +40,11 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
     private String storedMessages = "";
     private boolean printEvents = true;
     private IManagementClientCallback callback;
-    private ArrayList mySubscriptions;
+    private ArrayList<String> mySubscriptions;
 
     public static void main(String[] args) throws RemoteException {
 
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
         //args: bindingNames 0-analytics 1-billing
         if (args.length == 2) {
             //System.out.println(args[0] + " " + args[1]);
@@ -71,7 +68,7 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
      //this.callback = callback;
      }*/
     private void start() {
-        mySubscriptions = new ArrayList();
+        mySubscriptions = new ArrayList<String>();
         
         try {
             ManagementClientCallback mcc = new ManagementClientCallback(this);

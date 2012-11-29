@@ -11,7 +11,11 @@ import Events.Event;
  */
 public class StatisticsEvent extends Event{
     
-    private double value;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5701517005252388874L;
+	private double value;
     
     public StatisticsEvent(String type, long timestamp, double value) {
         super(type, timestamp);
