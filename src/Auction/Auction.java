@@ -17,6 +17,7 @@ import java.util.TimerTask;
 public class Auction {
 
     private static int counter = 0;
+    private static Object lock = new Object();
     private int id;
     private User owner, highestBidder;
     private String description;
@@ -47,8 +48,11 @@ public class Auction {
     }
 
 
-    private synchronized void setId() {
-        counter++;
+    private  void setId() {
+        synchronized (lock) {
+        	counter++;
+		}
+    	
         id = counter;
     }
     //TODO notify users + remove from list
@@ -57,6 +61,7 @@ public class Auction {
     private void endAuction() {
         hasEnded = true;
         auctionHandler.endAuction(this);
+        
     }
 
     public boolean hasEnded() {

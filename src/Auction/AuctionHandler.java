@@ -57,6 +57,7 @@ public class AuctionHandler {
                 Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+
             //a.getHighestBidder().receiveNotification(end + " You won with " + a.getHighestBid());
 
         }

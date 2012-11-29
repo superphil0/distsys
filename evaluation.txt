@@ -1,0 +1,19 @@
+Server läuft mit
+clients = 60
+auctionsPerMin = 20
+auctionDuration = 20
+updateIntervalSec: 5
+bidsPerMin = 60
+
+hier wird die cpu auf 80 % ausgelastet
+
+oder
+clients = 3000
+auctionsPerMin = 1
+auctionDuration = 120
+updateIntervalSec: 60
+bidsPerMin = 2
+
+bei dieser konfiguration ist der memory zu 97% voll
+stabil auf einem intel i7 (8 threads) @ 1.60 ghz
+4 gb ram Windows 7

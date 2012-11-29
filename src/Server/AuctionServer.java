@@ -44,7 +44,7 @@ public class AuctionServer extends Thread {
             rmiRegistry = LocateRegistry.getRegistry(RegistryProperties.getHost(), RegistryProperties.getPort());
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
             billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
-            IBillingSecure billingSecure = billingLogin.login("auctionUser", "verysafe");
+            IBillingSecure billingSecure = billingLogin.login("auctionUser", "dslab2012");
             
             AuctionHandler.getInstance();
 			AuctionHandler.setAS(analyticsService);
