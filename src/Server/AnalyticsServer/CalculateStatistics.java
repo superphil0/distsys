@@ -56,7 +56,7 @@ public class CalculateStatistics implements Runnable {
     public void run() {
 
         if (event != null) {
-            if (event instanceof AuctionEvent) {
+            if (event.getClass() == AuctionEvent.class) {
                 AuctionEvent auctionEvent = (AuctionEvent) event;
 
                 if (auctionEvent.getType().equals("AUCTION_STARTED")) {

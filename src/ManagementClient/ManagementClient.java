@@ -40,21 +40,11 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
     private String storedMessages = "";
     private boolean printEvents = true;
     private IManagementClientCallback callback;
-    private ArrayList mySubscriptions;
-    //private boolean subscribeAll = false;
-    
-    public ManagementClient (String a, String b) {
-        RegistryProperties r = new RegistryProperties();
-        analyticsBindingName = a;
-        billingBindingName = b;
-        //subscribeAll = true;
-        start();
-        
-    }
+    private ArrayList<String> mySubscriptions;
 
     public static void main(String[] args) throws RemoteException {
 
-        RegistryProperties r = new RegistryProperties();
+        new RegistryProperties();
         //args: bindingNames 0-analytics 1-billing
         if (args.length == 2) {
             //System.out.println(args[0] + " " + args[1]);

@@ -25,17 +25,15 @@ public class CommandProtocol {
     private ServerThread serverThread = null;
     //private String analyticsBindingName, billingBindingName;
     //private static Registry rmiRegistry;
-    private int port;
-    private String host;
+
     //private IAnalytics analyticsService;
 
     public CommandProtocol(ServerThread serverThread) {//, String analyticsBindingName, String billingBindingName) {
         userHandler = UserHandler.getInstance();
         auctionHandler = AuctionHandler.getInstance();
         this.serverThread = serverThread;
-        RegistryProperties r = new RegistryProperties();
-        port = RegistryProperties.getPort();
-        host = RegistryProperties.getHost();
+        new RegistryProperties();
+
 
         //this.analyticsBindingName = analyticsBindingName;
         //this.billingBindingName = billingBindingName;
@@ -195,7 +193,11 @@ public class CommandProtocol {
     private String listAuctions() {
         String list = "", highestBidder;
         if (auctionHandler.hasAuctions()) {
+        	synchronized (auctionHandler) {
+				
+			
         	Collection<Auction> auctions = auctionHandler.getAllAuctions().values();
+        	
             for (Auction a : auctions ) {
                 highestBidder = "none";
                 if (a.getHighestBidder() != null) {
@@ -205,6 +207,7 @@ public class CommandProtocol {
                         + " " + a.getEndDate() + " " + a.getHighestBid()
                         + " " + highestBidder + "\n";
             }
+        	}
         }
         if (list.isEmpty()) {
             list = "There are no Auctions.";

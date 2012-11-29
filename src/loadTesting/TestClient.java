@@ -5,14 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Random;
-import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 
-import Client.ClientThreadTCP;
-
 public class TestClient implements Runnable{
-	private BufferedReader in = null;
+	//private BufferedReader in = null;
 	private boolean running = true;
 	private Socket socket;
 	private int id;
@@ -36,7 +32,7 @@ public class TestClient implements Runnable{
 	public void run() {
 		try {
 			out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));		
+			//in = new BufferedReader(new InputStreamReader(socket.getInputStream()));		
 			//t = new OutputThread(
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

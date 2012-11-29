@@ -21,13 +21,17 @@ import java.util.Date;
  */
 public class ManagementClientCallback implements IManagementClientCallback, Serializable {
 
-    private ManagementClient mc;
-    private ArrayList received;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2483071239777590581L;
+	private ManagementClient mc;
+    private ArrayList<String> received;
     private int index = 0;
 
     public ManagementClientCallback(ManagementClient mc) {
         this.mc = mc;
-        received = new ArrayList(10);
+        received = new ArrayList<String>(10);
     }
     
     //send Output to LoadTest

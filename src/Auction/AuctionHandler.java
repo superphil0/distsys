@@ -24,7 +24,7 @@ public class AuctionHandler {
     private static AuctionHandler instance = new AuctionHandler();
     private static HashMap<Integer, Auction> auctionList = new HashMap<Integer, Auction>();
     //endedAuctions with Notifications outstanding
-    private HashMap<Integer, Auction> endedAuctions = new HashMap<Integer, Auction>();
+
     private static IAnalytics analyticsService;
 	private static IBillingSecure billingSecure;
 

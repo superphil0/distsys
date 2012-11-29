@@ -12,7 +12,11 @@ import java.util.UUID;
  * @author daniela
  */
 public abstract class Event  implements Serializable{
-    private String id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3332545136105336440L;
+	private String id;
     private String type;
     private long timestamp;
     

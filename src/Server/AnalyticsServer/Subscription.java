@@ -23,7 +23,6 @@ public class Subscription {//implements Runnable {
     private static long counter = 1;
     private IManagementClientCallback callbackObject;
     private Event event;
-    private AnalyticsServer server;
     private String filter;
 
     public Subscription(String filter, IManagementClientCallback callbackObject, AnalyticsServer server) {

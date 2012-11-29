@@ -5,8 +5,6 @@
 package Common;
 
 import Events.Event;
-import java.io.Serializable;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

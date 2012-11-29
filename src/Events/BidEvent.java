@@ -12,7 +12,11 @@ import Events.Event;
  */
 public class BidEvent extends Event {
 
-    private String userName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7756798106910453134L;
+	private String userName;
     private long auctionID;
     private double price;
 

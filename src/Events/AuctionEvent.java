@@ -12,7 +12,11 @@ import Events.Event;
  */
 public class AuctionEvent extends Event{
     
-    private long auctionID;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5826283893986709647L;
+	private long auctionID;
     
     public AuctionEvent(String type, long timestamp, long auctionID) {
         super(type, timestamp);

@@ -6,9 +6,6 @@ package Server;
 
 import PropertyReader.RegistryProperties;
 import java.io.IOException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
 /**
@@ -23,11 +20,9 @@ public class ServerStartUp {
 
 
     public static void main(String[] args) throws IOException {
-        RegistryProperties r = new RegistryProperties();
-        int rport = RegistryProperties.getPort();
-        String rhost = RegistryProperties.getHost();
-        //Registry rmiRegistry = LocateRegistry.createRegistry(rport);
-        //System.out.println("registry created: host " + rhost + " port " + rport);
+        new RegistryProperties();
+        RegistryProperties.getPort();
+        RegistryProperties.getHost();
 
         int port = 0;
         if (args.length != 3) {
