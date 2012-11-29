@@ -14,10 +14,12 @@ public class TestManagementClient extends ManagementClientCallback {
 
     public TestManagementClient() {
         super();
+        System.out.println("tmc started - test console");
     }
 
     @Override
     protected void sendOutput(String output) {
         System.out.println(output);
     }
+
 }

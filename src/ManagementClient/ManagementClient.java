@@ -41,13 +41,13 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
     private boolean printEvents = true;
     private IManagementClientCallback callback;
     private ArrayList mySubscriptions;
-    private boolean subscribeAll = false;
+    //private boolean subscribeAll = false;
     
     public ManagementClient (String a, String b) {
         RegistryProperties r = new RegistryProperties();
         analyticsBindingName = a;
         billingBindingName = b;
-        subscribeAll = true;
+        //subscribeAll = true;
         start();
         
     }
@@ -131,13 +131,14 @@ public class ManagementClient {  //implements IManagementClientCallback, Seriali
         
         openConnection();
         
-        if(subscribeAll) {
+       /* if(subscribeAll) {
             try {
                 analyticsService.subscribe("(USER_.*)|(BID_.*)|(AUCTION_.*)", callback);
             } catch (RemoteException ex) {
                 Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }*/
+        
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
         /*try {

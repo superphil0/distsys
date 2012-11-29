@@ -122,7 +122,7 @@ public class CalculateStatistics implements Runnable {
 
                 } else if (userEvent.getType().equals("USER_LOGOUT") || userEvent.getType().equals("USER_DISCONNECTED")) {
 
-                    System.out.println("user " + userEvent.getUserName() +" logout - login timestamp " + userList.get(userEvent.getUserName()));
+                    //System.out.println("user " + userEvent.getUserName() +" logout - login timestamp " + userList.get(userEvent.getUserName()));
                     long currentSessiontime = userEvent.getTimestamp() - userList.get(userEvent.getUserName());
                     userSessiontimeSum += currentSessiontime;
                     userCounter++;
