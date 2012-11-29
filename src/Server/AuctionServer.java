@@ -6,6 +6,8 @@ package Server;
 
 import Auction.AuctionHandler;
 import Common.IAnalytics;
+import Common.IBillingLogin;
+import Common.IBillingSecure;
 import PropertyReader.RegistryProperties;
 import User.UserHandler;
 import java.io.BufferedReader;
@@ -35,6 +37,7 @@ public class AuctionServer extends Thread {
     private String analyticsBindingName, billingBindingName;
     private static Registry rmiRegistry;
     private IAnalytics analyticsService;
+	private IBillingLogin billingLogin;
 
     public AuctionServer(int port, String analyticsBindingName, String billingBindingName) {
 
@@ -47,8 +50,12 @@ public class AuctionServer extends Thread {
         try {
             rmiRegistry = LocateRegistry.getRegistry(RegistryProperties.getHost(), RegistryProperties.getPort());
             analyticsService = (IAnalytics) rmiRegistry.lookup(analyticsBindingName);
+            billingLogin = (IBillingLogin) rmiRegistry.lookup(billingBindingName);
+            IBillingSecure billingSecure = billingLogin.login("auctionUser", "verysafe");
+            
             AuctionHandler.getInstance();
 			AuctionHandler.setAS(analyticsService);
+			AuctionHandler.setBilling(billingSecure);
             UserHandler.getInstance();
 			UserHandler.setAS(analyticsService);
 
