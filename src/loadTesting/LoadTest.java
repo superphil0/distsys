@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import ManagementClient.ManagementClient;
 import PropertyReader.LoadProperties;
 
 public class LoadTest {
@@ -64,6 +65,9 @@ public class LoadTest {
 	
 		TestClient t = null;
 		LinkedList<TestClient> clientList = new LinkedList<TestClient>();
+		ManagementClient manage = new ManagementClient();
+		manage.setAnalyticsBindingName(analyticsBindingName);
+		
 		long timeServerStart = System.currentTimeMillis();
 		for(int i = 0; i < clients; i++)
 		{
