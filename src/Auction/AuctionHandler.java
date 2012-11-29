@@ -5,6 +5,7 @@
 package Auction;
 
 import Common.IAnalytics;
+import Common.IBillingSecure;
 import Events.AuctionEvent;
 import Events.BidEvent;
 import User.User;
@@ -25,6 +26,7 @@ public class AuctionHandler {
     //endedAuctions with Notifications outstanding
     private HashMap<Integer, Auction> endedAuctions = new HashMap<Integer, Auction>();
     private static IAnalytics analyticsService;
+	private static IBillingSecure billingSecure;
 
     private AuctionHandler() {
         //auctionList = new HashMap<Integer, Auction>();
@@ -49,7 +51,7 @@ public class AuctionHandler {
 
             String bidder = a.getHighestBidder().getUsername();
             try {
-
+            	billingSecure.billAuction(bidder, a.getId(), a.getHighestBid());
                 analyticsService.processEvent(new BidEvent("BID_WON", new Date().getTime(), bidder, a.getId(), a.getHighestBid()));
             } catch (RemoteException ex) {
                 Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -119,4 +121,9 @@ public class AuctionHandler {
     public Auction getAuction(int id) {
         return auctionList.get(id);
     }
+
+	public static void setBilling(IBillingSecure billingSecuree) {
+		billingSecure = billingSecuree;
+		
+	}
 }
