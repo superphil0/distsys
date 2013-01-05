@@ -49,6 +49,8 @@ public class UserHandler {
                 analyticsService.processEvent(new UserEvent("USER_DISCONNECTED", new Date().getTime(), u.getUsername()));
             } catch (RemoteException ex) {
                 Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
             }
         }
     }
@@ -59,6 +61,8 @@ public class UserHandler {
             analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), user.getUsername()));
         } catch (RemoteException ex) {
             Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException npe) {
+            //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
         }
     }
 
@@ -96,6 +100,8 @@ public class UserHandler {
                     analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
                 } catch (RemoteException ex) {
                     Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException npe) {
+                    //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
                 }
 
 
@@ -105,12 +111,14 @@ public class UserHandler {
         } else {
             allUsers.put(username, new User(username));
             getUser(username).login(serverThread);
-            
+
             try {
-                    analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
-                } catch (RemoteException ex) {
-                    Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));
+            } catch (RemoteException ex) {
+                Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
+            }
             return true;
         }
     }

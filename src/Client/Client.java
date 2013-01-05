@@ -4,12 +4,19 @@
  */
 package Client;
 
+import Channel.Base64Channel;
+import Channel.IChannel;
+import Channel.SecureChannel;
+import Channel.TCPChannel;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 /**
  *
@@ -24,15 +31,22 @@ public class Client {
     private static int tcpPort;
     private static BufferedReader stdIn;
     private static boolean ok = false;
+    
+    private static IChannel secureChannel;
+    
+    private static PublicKey publicKeyServer = null;
+    private static PrivateKey privateKeyClient = null;
+    
+    protected static File ServerKeydirectory = null;
+    protected static File ClientKeydirectory = null;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
 
-    	if(args.length < 2)
-    	{
-    		System.out.println("Please enter hostname + hostport to connect to auction server");
-    		System.exit(0);
-    	}
+        if (args.length < 2) {
+            System.out.println("Please enter hostname + hostport to connect to auction server");
+            System.exit(0);
+        }
         try {
             host = args[0];
             tcpPort = Integer.parseInt(args[1]);
@@ -44,10 +58,10 @@ public class Client {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             //UDP Connection
-           // dataSocket = new DatagramSocket(udpPort);
-           // address = InetAddress.getByName(host);
+            // dataSocket = new DatagramSocket(udpPort);
+            // address = InetAddress.getByName(host);
 
-            System.out.println("Connected successfully to Server!");
+            System.out.println("Active Socket Conntection to Server!");
             ok = true;
 
         } catch (NumberFormatException e) {                     //and udp
@@ -61,12 +75,33 @@ public class Client {
             //System.exit(1);
         }
 
+
+        //read pub key from server and my priv key
+        //try {
+
+
+
+
+
+        //}
+
         if (ok) {
+
+
+
+
+
+
             /*
              * Starting TCP + UDP Threads
              */
             // Start TCP Thread
-            ClientThreadTCP ctTCP = new ClientThreadTCP(socket);
+
+            secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
+
+            //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
+            ClientThreadTCP ctTCP = new ClientThreadTCP(secureChannel);
+
             ctTCP.start();
 
             // Start UDP Thread
@@ -80,7 +115,7 @@ public class Client {
             String fromUser;
 
             try {
-                
+
                 //System.out.println(udpPort+"");
                 //out.println(udpPort);
 
@@ -91,7 +126,8 @@ public class Client {
                         break;
                     }
 
-                    out.println(fromUser);
+                    //out.println(fromUser);
+                    secureChannel.send(fromUser);
 
                 }
 
@@ -104,12 +140,22 @@ public class Client {
         }
     }
 
+    // For secure connection - lab3
+    public BufferedReader getInputReader() {
+        return in;
+    }
+
+    public PrintWriter getOutputWriter() {
+        return out;
+    }
+
     private static void close() {
         try {
             out.close();
             in.close();
             stdIn.close();
             socket.close();
+            secureChannel.close();
             System.out.println("Connection closed!");
         } catch (IOException e) {
             System.err.println("Problem with disconnection.");

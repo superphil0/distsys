@@ -4,6 +4,10 @@
  */
 package Server;
 
+import Channel.Base64Channel;
+import Channel.IChannel;
+import Channel.SecureChannel;
+import Channel.TCPChannel;
 import Protocol.CommandProtocol;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +26,8 @@ public class ServerThread extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private CommandProtocol cp;
+    private IChannel secureChannel;
+    
     public ServerThread(Socket socket) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
         this.socket = socket;
@@ -32,6 +38,8 @@ public class ServerThread extends Thread {
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
+
         } catch (IOException e) {
             out.println("Problem with In or Output - Connection.");
         }
@@ -59,15 +67,16 @@ public class ServerThread extends Thread {
 
 
             //while Client is sending - answer
-            while ((inputLine = in.readLine()) != null) {
+            while ((inputLine = secureChannel.receive()) != null) {    //in.readLine()) != null) {
                 outputLine = cp.processInput(inputLine);
                 //System.out.println(outputLine);
-                out.println(outputLine);
+                //out.println(outputLine);
+                secureChannel.send(outputLine);
 
             }
 
         } catch (IOException e) {
-            System.out.println(e);
+            //System.out.println(e);
             System.err.println("Problem with connection.");
         } finally {
             close();
@@ -94,7 +103,7 @@ public class ServerThread extends Thread {
             out.close();
             in.close();
             socket.close();
-
+            secureChannel.close();
             //System.out.println("Connection closed!");
         } catch (IOException e) {
             System.err.println("Problem with disconnection from " + socket.getInetAddress().toString());

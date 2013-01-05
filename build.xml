@@ -3,23 +3,28 @@
 
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="lib"/>
 
     <!-- You need to update these properties!-->
     <property name="server.name" value="Server.ServerStartUp"/><!-- Server's full class name (including the package) -->
     <property name="server.host" value="localhost"/><!-- Auction Server's host -->
     <property name="client.name" value="Client.Client"/><!-- Bidding Client's full class name (including the package) -->
+    <property name="mgmtclient.name" value="ManagementClient.ManagementClient"/><!-- Management Client's full class name (including the package) -->
+    <property name="analytics.name" value="Server.AnalyticsServer.AnalyticsServer"/><!-- Analytics Server's full class name (including the package) -->
+   
     <property name="client1.port" value="13481"/><!-- UDP port of 1st Bidding Client -->
     <property name="client2.port" value="13482"/><!-- UDP port of 2nd Bidding Client -->
     <property name="client3.port" value="13483"/><!-- UDP port of 3rd Bidding Client -->
-    <property name="mgmtclient.name" value="ManagementClient.ManagementClient"/><!-- Management Client's full class name (including the package) -->
-    <property name="analytics.name" value="Server.AnalyticsServer.AnalyticsServer"/><!-- Analytics Server's full class name (including the package) -->
-    
     
     <property name="billing.name" value="Server.BillingServer.BillingServer"/><!-- Billing Server's full class name (including the package) -->
-    <!-- TODO -->
-	<property name="analytics.bindingName" value="AnalyticsServerRef"/><!-- RMI Binding Name of the Analytics Server -->
+    <property name="analytics.bindingName" value="AnalyticsServerRef"/><!-- RMI Binding Name of the Analytics Server -->
     <property name="billing.bindingName" value="BillingServerRef"/><!-- RMI Binding Name of the Billing Server -->
     <property name="server.port" value="13480"/><!-- TCP port -->
+
+    <!-- new properties for assignment 3 -->
+    <property name="server.key" value="keys/auction-server.pem"/><!-- Private key file of Auction Server -->
+    <property name="server.key.pub" value="keys/auction-server.pub.pem"/><!-- Public key file of Auction Server -->
+    <property name="clients.key.dir" value="keys/"/><!-- Directory of private/public keys of bidding clients -->
 
     <path id="project.classpath">
         <pathelement location="${build.dir}"/>
@@ -29,7 +34,7 @@
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="project.classpath" debug="true" deprecation="true" includeantruntime="false"/>
         <copy todir="${build.dir}">
-            <fileset dir="${src.dir}">
+             <fileset dir="${src.dir}">
                 <include name="*.properties"/>
             </fileset>
         </copy>

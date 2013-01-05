@@ -4,6 +4,7 @@
  */
 package Client;
 
+import Channel.IChannel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,21 +16,29 @@ import java.net.Socket;
  * listening for Server response over TCP
  */
 public class ClientThreadTCP extends Thread{
-    private Socket socket = null;
-    private BufferedReader in = null;
+   // private Socket socket = null;
+    //private BufferedReader in = null;
     private String fromServer;
+        private static IChannel secureChannel;
+
     
-    public ClientThreadTCP (Socket socket) {
-        this.socket = socket;
+    /*public ClientThreadTCP (BufferedReader in) {
+        this.in = in;
+    }*/
+        
+    public ClientThreadTCP (IChannel secureChannel) {
+        this.secureChannel = secureChannel;
     }
     
     @Override
     public void run() {
         try  {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             //While Server is still answering, print message
-            while ((fromServer = in.readLine()) != null && socket.isConnected()){// && !fromServer.isEmpty()) {
+            
+               //(fromServer = in.readLine()) != null) {// && socket.isConnected()){// && !fromServer.isEmpty()) {
+            while ((fromServer = secureChannel.receive()) != null) {
                 System.out.println(fromServer);
             }
             
@@ -44,8 +53,9 @@ public class ClientThreadTCP extends Thread{
     public void close() {
         try {
             //System.out.println("closing connection to Server.");
-            in.close();
-            socket.close();
+            //in.close();
+            secureChannel.close();
+            //socket.close();
         } catch(IOException e) {
             System.err.println("Problem while closing");
             //System.exit(1);

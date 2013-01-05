@@ -20,7 +20,7 @@ class ManageUser
 	public ManageUser(String user, String password)
 	{
 		this.name = user;
-		this.password = passwod;
+		this.password = password;
 	}
 	@Override
 	public boolean equals(Object obj) {
