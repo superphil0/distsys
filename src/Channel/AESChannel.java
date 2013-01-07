@@ -30,9 +30,10 @@ public class AESChannel extends TCPChannel implements IChannel {
 		this.key = key;
 		macGenerator = new HMac(key);
 		this.params = params;
+		init();
 	}
 	
-	public void init()
+	private void init()
 	{
 		try {
 			encrypt = Cipher.getInstance("AES/CTR/NoPadding");
