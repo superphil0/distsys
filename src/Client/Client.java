@@ -22,10 +22,12 @@ import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PasswordFinder;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  *
@@ -40,10 +42,11 @@ public class Client {
     private static int tcpPort, clientPort;
     private static BufferedReader stdIn;
     private static boolean ok = false;
-    private static IChannel secureChannel;
+    private static SecureChannel secureChannel;
     private static PublicKey serverPubKey = null;
     private static PrivateKey myPrivKey = null;
     private static String pathToServerKey, pathToClientKeyDir;
+    private static byte[] myChallenge, serverChallenge;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
@@ -102,9 +105,9 @@ public class Client {
             // Start TCP Thread
 
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
-
+            secureChannel.setPubKey(serverPubKey);
             //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
-            ClientThreadTCP ctTCP = new ClientThreadTCP(secureChannel);
+            ClientThreadTCP ctTCP = new ClientThreadTCP();
 
             ctTCP.start();
 
@@ -136,6 +139,15 @@ public class Client {
                             try {
                                 myPrivKey = getPrivateKey(username);
                                 if (myPrivKey != null) {
+                                    secureChannel.setPrivKey(myPrivKey);
+                                    
+                                    fromUser += " " + clientPort;
+                                    
+                                    myChallenge = generateSecureRandom();
+                                    ctTCP.setClientChallenge(myChallenge);
+                                    byte[] rndNr64 = encodeBase64(myChallenge);
+                                    String challenge = bytes2String(rndNr64);
+                                    fromUser += " " + challenge;
                                     sendMsg = true;
                                 }
                             } catch (KeyNotFoundException ex) {
@@ -217,11 +229,44 @@ public class Client {
         try {
             keyPair = (KeyPair) pemIn.readObject();
         } catch (IOException ex) {
-            throw new WrongPasswordException("Wrong Password, please try again!");
+            throw new WrongPasswordException("Wrong Password, please try to login again!");
             //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         privateKey = keyPair.getPrivate();
         return privateKey;
+
+    }
+    
+    public static SecureChannel getSecureChannel() {
+        return secureChannel;
+    }
+            
+
+    //Helpers
+    public static byte[] string2Bytes(String message) {
+        return message.getBytes();
+    }
+
+    public static String bytes2String(byte[] byteMessage) {
+        return new String(byteMessage);
+    }
+
+    public static byte[] encodeBase64(byte[] byteMessage) {
+        byte[] base64Message = Base64.encode(byteMessage);
+        return base64Message;
+    }
+
+    public static byte[] decodeBase64(byte[] base64Message) {
+        byte[] byteMessage = Base64.decode(base64Message);
+        return byteMessage;
+    }
+
+    private static byte[] generateSecureRandom() {
+        // generates a 32 byte secure random number 
+        SecureRandom secureRandom = new SecureRandom();
+        final byte[] number = new byte[32];
+        secureRandom.nextBytes(number);
+        return number;
 
     }
 

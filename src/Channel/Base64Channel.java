@@ -81,14 +81,4 @@ public class Base64Channel extends TCPChannel {
         byte[] byteMessage = Base64.decode(base64Message);
         return byteMessage;
     }
-    /*
-     
-     [...]
-     // encode into Base64 format 
-     byte[] encryptedMessage = ... 
-     byte[] base64Message = Base64.encode(encryptedMessage);
-     // decode from Base64 format 
-     encryptedMessage = Base64.decode(base64Message);
-     
-     */
 }
