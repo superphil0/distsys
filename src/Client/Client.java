@@ -79,15 +79,9 @@ public class Client {
 
 
 
-
         //}
 
         if (ok) {
-
-
-
-
-
 
             /*
              * Starting TCP + UDP Threads
@@ -101,29 +95,25 @@ public class Client {
 
             ctTCP.start();
 
-            // Start UDP Thread
-            //ClientThreadUDP ctUDP = new ClientThreadUDP(udpPort);
-            //ctUDP.start();
-
-
-
             //User Input
             stdIn = new BufferedReader(new InputStreamReader(System.in));
             String fromUser;
 
             try {
-
  
                 //receiving User-Commands until input is null --> shut down
                 while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
 
                     if (fromUser.equals("")) {
                         System.out.println("no input - please enter a command!");
+                        
                     } else if (fromUser.equals("!end")) {
-                        //shut down
-                        break;
+                        break;//shut down
+                        
                     } else if (fromUser.startsWith("!login")) {
                         //get UserName, readPriv Key, require Password
+                        //base64 encode all parameters - decode am server how?!
+                        //
                     } else {
 
 

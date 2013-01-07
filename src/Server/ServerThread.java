@@ -8,12 +8,23 @@ import Channel.Base64Channel;
 import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
+import Exceptions.KeyNotFoundException;
+import Exceptions.WrongPasswordException;
 import Protocol.CommandProtocol;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bouncycastle.openssl.PEMReader;
+import org.bouncycastle.openssl.PasswordFinder;
 
 /**
  *
@@ -27,14 +38,20 @@ public class ServerThread extends Thread {
     private BufferedReader in;
     private CommandProtocol cp;
     private IChannel secureChannel;
-    
-    public ServerThread(Socket socket) { //, String analyticsBindingName, String billingBindingName) {
+    private String pathToClientKeyDir;
+    private PrivateKey myPrivKey;
+    private PublicKey otherPubKey;
+
+    public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
         this.socket = socket;
-        
+
+        this.myPrivKey = privKey;
+        this.pathToClientKeyDir = pathToClientKeyDir;
+
         //this.analyticsBindingName = analyticsBindingName;
         //this.billingBindingName = billingBindingName;
-        
+
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -51,20 +68,10 @@ public class ServerThread extends Thread {
 
         String inputLine, outputLine;
 
+
         try {
 
-           /* if ((inputLine = in.readLine()) != null) {
-                try {
-                    //System.out.println("tcp port: "+socket.getPort());
-                    udpPort = Integer.parseInt(inputLine);
-                    dataSocket = new DatagramSocket();
-                    //System.out.println("udpPort: " + udpPort);
-                } catch (NumberFormatException e) {
-                    out.println("Problem with udpPort");
-                }
-            }*/
-                    cp = new CommandProtocol(this); //, analyticsBindingName, billingBindingName);
-
+            cp = new CommandProtocol(this); //, analyticsBindingName, billingBindingName);
 
             //while Client is sending - answer
             while ((inputLine = secureChannel.receive()) != null) {    //in.readLine()) != null) {
@@ -85,19 +92,6 @@ public class ServerThread extends Thread {
         }
 
     }
-
-    /*public synchronized void sendNotification(String notification) {
-        if (dataSocket != null) {
-            buf = notification.getBytes();
-            dataPacket = new DatagramPacket(buf, buf.length, socket.getInetAddress(), udpPort);
-            try {
-                dataSocket.send(dataPacket);
-            } catch (IOException ex) {
-            }
-        } else {
-            //System.out.println("no data socket, note " + notification);
-        }
-    }*/
 
     protected void close() {
         try {
