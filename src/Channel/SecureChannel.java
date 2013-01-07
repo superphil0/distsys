@@ -19,7 +19,8 @@ import javax.crypto.SecretKey;
 public class SecureChannel extends TCPChannel {
     protected IChannel channel;
     
-    private SecretKey secretKey;
+    protected SecretKey secretKey;
+    protected String message;
     private byte[] ivParameter;
     private boolean sessionKeyExists = false;
     
@@ -49,6 +50,7 @@ public class SecureChannel extends TCPChannel {
 
     public void send(String message) {
         System.out.println("step 1 sec");
+        this.message = message;
         //TODO Encrypt message here
         
         if(!sessionKeyExists) { //RSA pub encryption
