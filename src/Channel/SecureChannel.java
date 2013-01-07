@@ -4,6 +4,7 @@
  */
 package Channel;
 
+import Exceptions.AESException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,6 +36,7 @@ public class SecureChannel extends TCPChannel {
     private PrivateKey myPrivKey;
     private Cipher cEncrypt;
     private Cipher cDecrypt;
+    private AES aesCrypter;
 
     /*
      c1=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");
@@ -59,11 +61,11 @@ public class SecureChannel extends TCPChannel {
             cDecrypt = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding", "BC");
             System.out.println(">SecureChannel: Cipher algorithm found! ");
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("RSA: No Such Algorithm.");
         } catch (NoSuchProviderException ex) {
-            Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("RSA: No Such Provider.");
         } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("RSA: No Such Padding.");
         }
     }
 
@@ -84,12 +86,12 @@ public class SecureChannel extends TCPChannel {
             } else if (message.startsWith("!login") || message.startsWith("!ok")) { //1 or 2 part of handshake - encrypt with pub.key
                 //encrypt RSA
                 try {
-                    String encrypted = bytes2String(cEncrypt.doFinal(message.getBytes()));
+                    String encrypted = new String(cEncrypt.doFinal(message.getBytes()));
                     System.out.println(">encrypting: " + message);
                     channel.send(encrypted);
                     return;
                 } catch (Exception ex) {
-                    Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error while trying to encrypt Message... please try again!");
                 }
 
@@ -98,7 +100,15 @@ public class SecureChannel extends TCPChannel {
                 return;
             }
 
-        } else { //AES encryption
+        } else {
+            try {
+                //AES encryption
+                channel.send(new String(aesCrypter.encryptAES(message.getBytes())));
+                return;
+            } catch (AESException ex) {
+                System.err.println(ex.getMessage());
+                return;
+            }
         }
         channel.send(message);
 
@@ -122,7 +132,7 @@ public class SecureChannel extends TCPChannel {
                 listCommand = false;
                 try {
                     //has to be decrypted with priv key (!login from client oder !ok from server)
-                    String decrypted = bytes2String(cDecrypt.doFinal(message.getBytes()));
+                    String decrypted = new String(cDecrypt.doFinal(message.getBytes()));
                     return decrypted;
                 } catch (Exception ex) {
                     System.out.println("Error while trying to decrypt Message...");
@@ -131,7 +141,13 @@ public class SecureChannel extends TCPChannel {
             }
 
 
-        } else { //AES decryption
+        } else {
+            try {
+                //AES decryption
+                return new String(aesCrypter.decryptAES(message.getBytes()));
+            } catch (AESException ex) {
+                System.err.println(ex.getMessage());
+            }
         }
 
         listCommand = false;
@@ -188,10 +204,11 @@ public class SecureChannel extends TCPChannel {
      this.otherPubKey = otherPubKey;
      this.myPrivKey = myPrivKey;
      }*/
-    public void setSessionKey(SecretKey secretKey, byte[] ivParameter) {
+    public void setSessionKey(SecretKey secretKey, byte[] ivParameter) throws AESException {
         this.secretKey = secretKey;
         this.ivParameter = ivParameter;
         hasSessionKey = true;
+        aesCrypter = new AES(secretKey, ivParameter);
         System.out.println(">SecureChannel: SessionKey set!");
     }
 
@@ -200,13 +217,6 @@ public class SecureChannel extends TCPChannel {
         secretKey = null;
         ivParameter = null;
         hasSessionKey = false;
-    }
-
-    private byte[] string2Bytes(String message) {
-        return message.getBytes();
-    }
-
-    private String bytes2String(byte[] byteMessage) {
-        return new String(byteMessage);
+        aesCrypter = null;
     }
 }

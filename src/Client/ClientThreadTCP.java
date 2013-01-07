@@ -6,8 +6,11 @@ package Client;
 
 import Channel.IChannel;
 import Channel.SecureChannel;
+import Exceptions.AESException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -55,7 +58,11 @@ public class ClientThreadTCP extends Thread {
                         byte[] sKey = Client.decodeBase64(input[3].getBytes());
                         this.sessionKey = new SecretKeySpec(sKey, "AES");
                         this.ivParam = Client.decodeBase64(input[4].getBytes());
-                        secureChannel.setSessionKey(sessionKey, ivParam);
+                        try {
+                            secureChannel.setSessionKey(sessionKey, ivParam);
+                        } catch (AESException ex) {
+                            System.err.println(ex.getMessage());
+                        }
                         
                     } else {
                         System.out.println("Received Client Challenge differs from Sent one.");

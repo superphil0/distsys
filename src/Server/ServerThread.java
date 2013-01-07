@@ -8,6 +8,7 @@ import Channel.Base64Channel;
 import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
+import Exceptions.AESException;
 import Exceptions.KeyNotFoundException;
 import Exceptions.WrongPasswordException;
 import Protocol.CommandProtocol;
@@ -122,8 +123,11 @@ public class ServerThread extends Thread {
                             
                             String ivParam64 = bytes2String(encodeBase64(ivParam));
                             outputLine += " " + ivParam64;
-                            
-                            secureChannel.setSessionKey(sessionKey, ivParam);
+                            try {
+                                secureChannel.setSessionKey(sessionKey, ivParam);
+                            } catch (AESException ex) {
+                                System.err.println(ex.getMessage());
+                            }
                             System.out.println(">ServerThread sending: " + outputLine);
                         }
 
