@@ -32,7 +32,7 @@ public class AuctionServer extends Thread {
     private static ArrayList<ServerThread> serverList;
     private static Registry rmiRegistry;
     private IAnalytics analyticsService;
-	private IBillingLogin billingLogin;
+    private IBillingLogin billingLogin;
 
     public AuctionServer(int port, String analyticsBindingName, String billingBindingName) {
 

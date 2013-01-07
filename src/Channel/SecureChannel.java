@@ -40,12 +40,12 @@ public class SecureChannel extends TCPChannel {
         this.channel = channel;
     }
     
-    public SecureChannel(TCPChannel channel, PublicKey otherPubKey, PrivateKey myPrivKey){
+    /*public SecureChannel(TCPChannel channel, PublicKey otherPubKey, PrivateKey myPrivKey){
         super(channel);
         this.channel = channel;
         this.otherPubKey = otherPubKey;
         this.myPrivKey = myPrivKey;
-    }
+    }*/
 
     public void send(String message) {
         System.out.println("step 1 sec");
