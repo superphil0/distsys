@@ -17,6 +17,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 
 /**
@@ -33,12 +34,16 @@ public class AuctionServer extends Thread {
     private static Registry rmiRegistry;
     private IAnalytics analyticsService;
     private IBillingLogin billingLogin;
+    private String pathToClientKeyDir;
+    private PrivateKey privKey;
 
-    public AuctionServer(int port, String analyticsBindingName, String billingBindingName) {
+    public AuctionServer(int port, String analyticsBindingName, String billingBindingName, PrivateKey privKey, String pathToClientKeyDir) {
 
         AuctionServer.port = port;
         serverList = new ArrayList<ServerThread>();
         new RegistryProperties();
+        this.privKey = privKey;
+        this.pathToClientKeyDir = pathToClientKeyDir;
 
         try {
             rmiRegistry = LocateRegistry.getRegistry(RegistryProperties.getHost(), RegistryProperties.getPort());
@@ -78,7 +83,7 @@ public class AuctionServer extends Thread {
 
         while (listening) {
             try {
-                ServerThread clientCon = new ServerThread(listeningSocket.accept());//, analyticsBindingName, billingBindingName);
+                ServerThread clientCon = new ServerThread(listeningSocket.accept(), privKey, pathToClientKeyDir);//, analyticsBindingName, billingBindingName);
                 clientCon.start();
                 serverList.add(clientCon);
             } catch (IOException ex) {

@@ -44,7 +44,9 @@ public class ClientThreadTCP extends Thread{
             
         } catch (IOException e) {
             //System.err.println("Couldn't get output from Server.");
-        } finally {
+        } catch (NullPointerException ex) {
+            System.out.println("Lost Connection to Server... ");
+        }finally {
             //closes TCP connection when there is no response
             close();
         }
