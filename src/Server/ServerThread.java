@@ -40,7 +40,7 @@ public class ServerThread extends Thread {
     private IChannel secureChannel;
     private String pathToClientKeyDir;
     private PrivateKey myPrivKey;
-    private PublicKey otherPubKey;
+    private PublicKey clientPubKey;
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -73,9 +73,30 @@ public class ServerThread extends Thread {
 
             cp = new CommandProtocol(this); //, analyticsBindingName, billingBindingName);
 
-            //while Client is sending - answer
+            //proccessing client input
+            boolean processMsg = true;
             while ((inputLine = secureChannel.receive()) != null) {    //in.readLine()) != null) {
-                outputLine = cp.processInput(inputLine);
+                //System.out.println(">received from User: "+inputLine);
+                processMsg = true;
+                outputLine = "couldn't process input";
+                
+                if(inputLine.startsWith("!login")) {
+                    String username = inputLine.split(" ")[1];
+                    try {
+                        //TODO set to secureChannel
+                        clientPubKey = readClientsPubKey(pathToClientKeyDir, username);
+                        
+                        
+                    } catch (KeyNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        outputLine = ex.getMessage();
+                        processMsg = false;
+                    }
+                }
+                
+                if(processMsg) {
+                    outputLine = cp.processInput(inputLine);
+                }
                 //System.out.println(outputLine);
                 //out.println(outputLine);
                 secureChannel.send(outputLine);
@@ -91,6 +112,27 @@ public class ServerThread extends Thread {
             close();
         }
 
+    }
+
+    private PublicKey readClientsPubKey(String pathToClientKeyDir, String userName) throws KeyNotFoundException {
+        String pathToPublicKey = pathToClientKeyDir + "/" + userName + ".pub.pem";
+        PublicKey publicKey = null;
+        PEMReader in;
+        try {
+            in = new PEMReader(new FileReader(pathToPublicKey));
+        } catch (FileNotFoundException ex) {
+            //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            throw new KeyNotFoundException("Wrong path to Private Server Key");
+        }
+        
+        try {
+            publicKey = (PublicKey) in.readObject();
+        } catch (IOException ex) {
+            throw new KeyNotFoundException("Couldn't read Key");
+            //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return publicKey;
     }
 
     protected void close() {

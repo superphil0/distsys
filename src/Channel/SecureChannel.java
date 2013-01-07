@@ -17,16 +17,14 @@ import javax.crypto.SecretKey;
  * @author daniela
  */
 public class SecureChannel extends TCPChannel {
+
     protected IChannel channel;
-    
     private SecretKey secretKey;
     private byte[] ivParameter;
     private boolean hasSessionKey = false;
     private boolean listCommand = false;
-    
     private PublicKey otherPubKey;
     private PrivateKey myPrivKey;
-    
     private Cipher cEncypt;
     private Cipher cDecrypt;
 
@@ -34,77 +32,76 @@ public class SecureChannel extends TCPChannel {
         super(out, in);
 
     }
-   
+
     //to delete?
-    public SecureChannel(TCPChannel channel){
+    public SecureChannel(TCPChannel channel) {
         super(channel);
         this.channel = channel;
     }
-    
-    /*public SecureChannel(TCPChannel channel, PublicKey otherPubKey, PrivateKey myPrivKey){
-        super(channel);
-        this.channel = channel;
-        this.otherPubKey = otherPubKey;
-        this.myPrivKey = myPrivKey;
-    }*/
 
+    /*public SecureChannel(TCPChannel channel, PublicKey otherPubKey, PrivateKey myPrivKey){
+     super(channel);
+     this.channel = channel;
+     this.otherPubKey = otherPubKey;
+     this.myPrivKey = myPrivKey;
+     }*/
     public void send(String message) {
-        System.out.println("step 1 sec");
+        //System.out.println("step 1 sec");
         //TODO Encrypt message here
-        
-        if(!hasSessionKey) { //RSA pub encryption
-            if(message.startsWith("!list")){ //no encryption
+
+        if (!hasSessionKey) { //RSA pub encryption
+            if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
             } else { //RSA encryption
-                
             }
-            
+
         } else { //AES encryption
-            
         }
-        
+
         listCommand = false;
         channel.send(message);
-    
+
     }
 
-    public String receive() throws IOException{
+    public String receive() throws IOException {
+        //System.out.println("step 3.1 receive decrypt");
+
         String message = channel.receive(); //incoming message, already base 64 decoded
+        //System.out.println("step 3.2 receive decrypt");
+
         //TODO Decrypt message here
-        if(!hasSessionKey) { //RSA priv decryption
-            if(message.startsWith("!list")){ //no encryption
+        if (!hasSessionKey) { //RSA priv decryption
+            if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
             } else { //RSA encryption
-                
             }
-            
+
         } else { //AES decryption
-            
         }
-        
+
         listCommand = false;
-        return channel.receive();
-    
+        return message;
+
     }
-    
+
     public void listCommand() {
-        if(!hasSessionKey){
+        if (!hasSessionKey) {
             listCommand = true;
         }
-            
+
     }
-    
-    public void setRSAKeys (PublicKey oterPubKey, PrivateKey myPrivKey) {
+
+    public void setRSAKeys(PublicKey oterPubKey, PrivateKey myPrivKey) {
         this.otherPubKey = oterPubKey;
         this.myPrivKey = myPrivKey;
     }
-    
+
     public void setSessionKey(SecretKey secretKey, byte[] ivParameter) {
         this.secretKey = secretKey;
         this.ivParameter = ivParameter;
         hasSessionKey = true;
     }
-    
+
     public void removeSessionKey() {
         secretKey = null;
         ivParameter = null;
