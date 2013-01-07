@@ -55,6 +55,8 @@ public class AuctionHandler {
                 analyticsService.processEvent(new BidEvent("BID_WON", new Date().getTime(), bidder, a.getId(), a.getHighestBid()));
             } catch (RemoteException ex) {
                 Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
             }
 
 
@@ -69,7 +71,9 @@ public class AuctionHandler {
             analyticsService.processEvent(new AuctionEvent("AUCTION_ENDED", new Date().getTime(), a.getId()));
         } catch (RemoteException ex) {
             Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
+            }
 
         auctionList.remove(a.getId());
     }
@@ -90,7 +94,9 @@ public class AuctionHandler {
                     analyticsService.processEvent(new BidEvent(type, new Date().getTime(), bidder.getUsername(), id, amount));
                 } catch (RemoteException ex) {
                     Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
+            }
             }
             return bidResult;
         } else {
@@ -110,7 +116,9 @@ public class AuctionHandler {
             analyticsService.processEvent(new AuctionEvent("AUCTION_STARTED", new Date().getTime(), auction.getId()));
         } catch (RemoteException ex) {
             Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }catch (NullPointerException npe) {
+                //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
+            }
 
         return auction;
     }
