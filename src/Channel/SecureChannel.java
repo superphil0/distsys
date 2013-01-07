@@ -21,7 +21,8 @@ public class SecureChannel extends TCPChannel {
     
     private SecretKey secretKey;
     private byte[] ivParameter;
-    private boolean sessionKeyExists = false;
+    private boolean hasSessionKey = false;
+    private boolean listCommand = false;
     
     private PublicKey otherPubKey;
     private PrivateKey myPrivKey;
@@ -51,39 +52,62 @@ public class SecureChannel extends TCPChannel {
         System.out.println("step 1 sec");
         //TODO Encrypt message here
         
-        if(!sessionKeyExists) { //RSA pub encryption
+        if(!hasSessionKey) { //RSA pub encryption
+            if(message.startsWith("!list")){ //no encryption
+                listCommand = true;
+            } else { //RSA encryption
+                
+            }
             
         } else { //AES encryption
             
         }
         
+        listCommand = false;
         channel.send(message);
     
     }
 
     public String receive() throws IOException{
+        String message = channel.receive(); //incoming message, already base 64 decoded
         //TODO Decrypt message here
-        if(!sessionKeyExists) { //RSA priv decryption
+        if(!hasSessionKey) { //RSA priv decryption
+            if(message.startsWith("!list")){ //no encryption
+                listCommand = true;
+            } else { //RSA encryption
+                
+            }
             
         } else { //AES decryption
             
         }
         
-        
+        listCommand = false;
         return channel.receive();
     
     }
     
+    public void listCommand() {
+        if(!hasSessionKey){
+            listCommand = true;
+        }
+            
+    }
+    
+    public void setRSAKeys (PublicKey oterPubKey, PrivateKey myPrivKey) {
+        this.otherPubKey = oterPubKey;
+        this.myPrivKey = myPrivKey;
+    }
     
     public void setSessionKey(SecretKey secretKey, byte[] ivParameter) {
         this.secretKey = secretKey;
         this.ivParameter = ivParameter;
-        sessionKeyExists = true;
+        hasSessionKey = true;
     }
     
     public void removeSessionKey() {
         secretKey = null;
         ivParameter = null;
-        sessionKeyExists = false;
+        hasSessionKey = false;
     }
 }

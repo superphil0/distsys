@@ -78,6 +78,8 @@ public class ServerThread extends Thread {
         } catch (IOException e) {
             //System.out.println(e);
             System.err.println("Problem with connection.");
+        } catch (NullPointerException e) {
+            //Client closed Connection
         } finally {
             close();
         }

@@ -31,12 +31,9 @@ public class Client {
     private static int tcpPort;
     private static BufferedReader stdIn;
     private static boolean ok = false;
-    
     private static IChannel secureChannel;
-    
     private static PublicKey publicKeyServer = null;
     private static PrivateKey privateKeyClient = null;
-    
     protected static File ServerKeydirectory = null;
     protected static File ClientKeydirectory = null;
 
@@ -116,18 +113,23 @@ public class Client {
 
             try {
 
-                //System.out.println(udpPort+"");
-                //out.println(udpPort);
-
+ 
                 //receiving User-Commands until input is null --> shut down
-                while ((fromUser = stdIn.readLine()) != null) {// && !fromUser.isEmpty()) {
-                    if (fromUser.equals("!end")) {
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                    } else if (fromUser.equals("!end")) {
                         //shut down
                         break;
-                    }
+                    } else if (fromUser.startsWith("!login")) {
+                        //get UserName, readPriv Key, require Password
+                    } else {
 
-                    //out.println(fromUser);
-                    secureChannel.send(fromUser);
+
+                        secureChannel.send(fromUser);
+
+                    }
 
                 }
 
