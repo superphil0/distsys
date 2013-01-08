@@ -67,6 +67,7 @@ public class UserHandler {
         } catch (NullPointerException npe) {
             //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
         }
+        allUsers.remove(user);
     }
 
     public static synchronized void setAS(IAnalytics as) {
