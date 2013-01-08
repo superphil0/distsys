@@ -25,7 +25,7 @@ public class CommandProtocol {
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;
     private ServerThread serverThread = null;
-    private LinkedList<Bid> groupBids = LinkedList<Bid>();
+    private LinkedList<Bid> groupBids = new LinkedList<Bid>();
     //private String analyticsBindingName, billingBindingName;
     //private static Registry rmiRegistry;
 
