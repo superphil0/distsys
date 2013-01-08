@@ -4,13 +4,11 @@
  */
 package Client;
 
-import Channel.IChannel;
 import Channel.SecureChannel;
 import Exceptions.AESException;
+import Exceptions.HMacException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -28,15 +26,10 @@ public class ClientThreadTCP extends Thread {
     private byte[] sentClientChallenge, receivedClientChallenge;
     private SecretKey sessionKey;
     private byte[] ivParam;
-   // private byte[] serverChallenge;
 
-    /*public ClientThreadTCP (BufferedReader in) {
-     this.in = in;
-     }*/
     public ClientThreadTCP() {
         secureChannel = clientCallback.getSecureChannel();
     }
-
 
     @Override
     public void run() {
@@ -47,33 +40,35 @@ public class ClientThreadTCP extends Thread {
 
             //(fromServer = in.readLine()) != null) {// && socket.isConnected()){// && !fromServer.isEmpty()) {
             while ((fromServer = secureChannel.receive()) != null) {
-                if(fromServer.startsWith("!ok")) {
+                if (fromServer.startsWith("!ok")) {
                     //TODO compare client challenge, get server challenge
                     System.out.println(">ClientTreadTCP: ok received");
                     System.out.println(fromServer);
                     String[] input = fromServer.split(" ");
                     receivedClientChallenge = Client.decodeBase64(input[1].getBytes());
-                    
-                    if(Arrays.equals(sentClientChallenge, receivedClientChallenge)) {
+
+                    if (Arrays.equals(sentClientChallenge, receivedClientChallenge)) {
                         byte[] sKey = Client.decodeBase64(input[3].getBytes());
                         this.sessionKey = new SecretKeySpec(sKey, "AES");
                         this.ivParam = Client.decodeBase64(input[4].getBytes());
                         try {
                             secureChannel.setSessionKey(sessionKey, ivParam);
                             secureChannel.send(input[2]);
+                        } catch (HMacException ex) {
+                            System.err.println(ex.getMessage());
                         } catch (AESException ex) {
                             System.err.println(ex.getMessage());
                         }
-                        
+
                     } else {
                         System.out.println("Received Client Challenge differs from Sent one.");
                     }
                     //System.out.println(fromServer);
-                    
+
                 } else if (fromServer.startsWith("!resend")) {
                     //TODO resend last command
                 } else {
-                System.out.println(fromServer);
+                    System.out.println(fromServer);
                 }
             }
 
@@ -86,7 +81,7 @@ public class ClientThreadTCP extends Thread {
             close();
         }
     }
-    
+
     public void setClientChallenge(byte[] sentClientChallenge) {
         this.sentClientChallenge = sentClientChallenge;
     }

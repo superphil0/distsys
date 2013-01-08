@@ -9,6 +9,7 @@ import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
 import Exceptions.AESException;
+import Exceptions.HMacException;
 import Exceptions.KeyNotFoundException;
 import Exceptions.WrongPasswordException;
 import Protocol.CommandProtocol;
@@ -131,7 +132,11 @@ public class ServerThread extends Thread {
                             processMsg = false;
                             try {
                                 secureChannel.setSessionKey(sessionKey, ivParam);
+                                secureChannel.setUsername(username);
+                                secureChannel.setPath(pathToClientKeyDir);
                                 firstAESmsg = true;
+                            } catch (HMacException ex) {
+                                System.err.println(ex.getMessage());
                             } catch (AESException ex) {
                                 System.err.println(ex.getMessage());
                             }

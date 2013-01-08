@@ -48,15 +48,11 @@ public class Client {
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
     private static String username;
+    private static String messageBuffer;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
-/*
-         <arg value="${server.host}"/>
-         <arg value="${server.port}"/>
-         <arg value="${client1.port}"/>
-         <arg value="${server.key.pub}"/>
-         <arg value="${clients.key.dir}"/>*/
+
         if (args.length != 5) {
             System.out.println("Invalid input arguments!"
                     + "Please enter hostname, hostport, clientport, pathToServerKey, clientKeyDir to start this client.");
@@ -150,6 +146,8 @@ public class Client {
                                         byte[] rndNr64 = encodeBase64(myChallenge);
                                         String challenge = bytes2String(rndNr64);
                                         fromUser += " " + challenge;
+                                        secureChannel.setUsername(username);
+                                        secureChannel.setPath(pathToClientKeyDir);
                                         sendMsg = true;
                                     }
                                 } catch (KeyNotFoundException ex) {
@@ -173,6 +171,8 @@ public class Client {
                         if (sendMsg) {
                             //System.out.println(">sending: " + fromUser);
                             secureChannel.send(fromUser);
+                            messageBuffer = fromUser;
+                            
                             if (fromUser.startsWith("!logout")) {
                                 secureChannel.removeSessionKey();
                                 username = null;

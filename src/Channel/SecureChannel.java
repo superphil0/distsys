@@ -5,6 +5,9 @@
 package Channel;
 
 import Exceptions.AESException;
+import Exceptions.HMacException;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +23,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
  *
@@ -38,6 +42,8 @@ public class SecureChannel extends TCPChannel {
     private Cipher cDecrypt;
     private AES aesCrypter;
     private boolean logoutResponse;
+    private String username, path;
+    private HMac hmac;
 
     /*
      c1=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");
@@ -105,14 +111,19 @@ public class SecureChannel extends TCPChannel {
         } else {
             try {
                 //AES encryption
-                channel.send(new String(aesCrypter.encryptAES(message.getBytes())));
+                String encryptedMessage = new String(aesCrypter.encryptAES(message.getBytes()));
+                String hmac = generateMac(message);
+                String msg64 = Base64.encode(encryptedMessage.getBytes());
+                channel.send(msg64 + " " + hmac);
                 return;
+            } catch (HMacException ex) {
+                System.err.println(ex.getMessage());
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
                 return;
             }
         }
-        channel.send(message);
+        //channel.send(message);
 
     }
 
@@ -143,11 +154,27 @@ public class SecureChannel extends TCPChannel {
                 }
             }
 
-
+/*
+ String encryptedMessage = new String(aesCrypter.encryptAES(message.getBytes()));
+                String hmac = generateMac(message);
+                String msg64 = Base64.encode(encryptedMessage.getBytes());
+                channel.send(msg64 + " " + hmac);*/
         } else {
             try {
                 //AES decryption
-                return new String(aesCrypter.decryptAES(message.getBytes()));
+                String msg64 = message.split(" ")[0];
+                String rhmac = message.split(" ")[1]; 
+                String plainText = new String(aesCrypter.decryptAES(Base64.decode(msg64)));
+                String ghmac = generateMac(plainText);
+                System.out.println("rhmac: " + rhmac);
+                System.out.println("ghmac: " + ghmac);
+                
+                return plainText;
+                //return new String(aesCrypter.decryptAES(message.getBytes()));
+            } catch (HMacException ex) {
+                System.err.println(ex.getMessage());
+            } catch (Base64DecodingException ex) {
+                System.err.println(ex.getMessage());
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
             }
@@ -159,6 +186,15 @@ public class SecureChannel extends TCPChannel {
 
 
     }
+    
+    
+    /*
+     * generates a String version of a Hex encoded HMac
+     */
+    private String generateMac(String message) throws HMacException {
+        byte[] mac = hmac.getMac(message);
+        return new String(Hex.encode(mac));
+    }
 
     public void listCommand() {
         if (!hasSessionKey) {
@@ -169,6 +205,14 @@ public class SecureChannel extends TCPChannel {
 
     public boolean hasSessionKey() {
         return hasSessionKey;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public void setPrivKey(PrivateKey myPrivKey) {
@@ -195,12 +239,13 @@ public class SecureChannel extends TCPChannel {
         }
     }
 
-    public void setSessionKey(SecretKey secretKey, byte[] ivParameter) throws AESException {
+    public void setSessionKey(SecretKey secretKey, byte[] ivParameter) throws AESException, HMacException {
         this.secretKey = secretKey;
         this.ivParameter = ivParameter;
         hasSessionKey = true;
         aesCrypter = new AES(secretKey, ivParameter);
         System.out.println(">SecureChannel: SessionKey set!");
+        hmac = new HMac(path, username);
     }
 
     /**
@@ -216,5 +261,9 @@ public class SecureChannel extends TCPChannel {
 
         otherPubKey = null;
         myPrivKey = null;
+        
+        hmac = null;
+        username = null;
+        path = null;
     }
 }
