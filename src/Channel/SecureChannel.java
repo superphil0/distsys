@@ -14,10 +14,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
  *
@@ -107,16 +110,18 @@ public class SecureChannel extends TCPChannel {
         } else { //AES encryption
 
             try {
-                byte[] hmac64 = Base64.encode(hmacGenerator.getMac(message));
-                String hmac = new String(hmac64);
+                /*byte[] hmacX = Hex.encode(hmacGenerator.getMac(message));
+                String hmac = new String(hmacX);
 
+                System.out.println("hmac: " + hmac);
+                */
                 String encrypted = new String(aesCrypter.encryptAES(message.getBytes()));
-                String toSend = encrypted; //+ " " + hmac;
+                String toSend = encrypted;//+ " ; " + hmac;
                 channel.send(toSend);
                 return;
-            } catch (HMacException ex) {
+            /*} catch (HMacException ex) {
                 System.err.println(ex.getMessage());
-                return;
+                return;*/
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
                 return;
@@ -157,21 +162,19 @@ public class SecureChannel extends TCPChannel {
         } else {//AES decryption
             System.out.println(">SecureChannel: AES decrypting");
             try {
-                //String[] incoming = channel.receive().split(" "); //incoming message, already base 64 decoded
+               /* String[] incoming = channel.receive().split(" ; "); //incoming message, already base 64 decoded
 
-                /*
-                 System.arraycopy(bytes, bytes.length - 32, receivedMac, 0, 32);
-                 System.arraycopy(bytes, 0, receivedMsg, 0, bytes.length - 32);
-                 */
-
-                //String receivedHmac = incoming[incoming.length - 1];
+                String receivedHmac = incoming[1];*/
 
                 String message = channel.receive();
-                /*for (int i = 0; i < incoming.length - 1; i++) {
-                    message += incoming[i] + " ";
-                }*/
-                //System.out.println(">receiving: " + message);
+                
                 String decrypted = new String(aesCrypter.decryptAES(message.getBytes()));
+                
+                /*byte[] hmacX = Hex.encode(hmacGenerator.getMac(message));
+                String hmac = new String(hmacX);
+
+                System.out.println("hmac: " + hmac);
+                System.out.println("rmac: " + receivedHmac);*/
 
                 //String generatedHmac = new String(Base64.encode(hmacGenerator.getMac(decrypted)));
                 //System.out.println("received  " + receivedHmac + "\ngenerated " + generatedHmac);
@@ -196,6 +199,8 @@ public class SecureChannel extends TCPChannel {
 
            // } catch (HMacException ex) {
              //   System.err.println(ex.getMessage());
+           // } catch (HMacException ex) {
+            //    System.err.println(ex.getMessage());
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
             }
@@ -251,6 +256,14 @@ public class SecureChannel extends TCPChannel {
 
     public void setPathToClientKeyDir(String path) {
         this.pathToClientKeyDir = path;
+    }
+    
+    public boolean hasSessionKey() {
+        return hasSessionKey;
+    }
+    
+    public String getUsername() {
+        return username;
     }
 
     /**

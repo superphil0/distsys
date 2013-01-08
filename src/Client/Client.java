@@ -128,6 +128,9 @@ public class Client {
                     } else if (fromUser.equals("!end")) {
                         break;//shut down
 
+                    }   else if (fromUser.equals("!login")&& secureChannel.hasSessionKey()) {
+                        System.out.println("Already loggen in as "+ username);
+
                     } else {
                         if (fromUser.startsWith("!login")) {
                             //read Serv pub Key
@@ -135,6 +138,8 @@ public class Client {
                             //create client challenge
                             //base64 encode all parameters - decode am server how?!
                             //
+                            String[] input = fromUser.split(" ");
+                            if(input.length == 2) {
                             username = fromUser.split(" ")[1];
                             try {
                                 myPrivKey = getPrivateKey(username);
@@ -156,6 +161,10 @@ public class Client {
                             } catch (WrongPasswordException ex) {
                                 System.out.println(ex.getMessage());
                                 sendMsg = false;
+                            }
+                            } else {
+                                sendMsg = false;
+                                System.out.println("Missing username! Please enter !login <username>");
                             }
 
                         }
