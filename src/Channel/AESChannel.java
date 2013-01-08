@@ -9,8 +9,6 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -64,7 +62,7 @@ public class AESChannel extends TCPChannel {
 
     }
 
-    @Override
+   /* @Override
     public String receive() {
         try {
             //throws AESException{
@@ -104,7 +102,7 @@ public class AESChannel extends TCPChannel {
     }
 
     @Override
-    public void send(String message){
+    public void send(String message) {
         encrypt.update(message.getBytes());
         try {
             message = new String(encrypt.doFinal());
@@ -116,5 +114,5 @@ public class AESChannel extends TCPChannel {
 
         byte[] bytes = macGenerator.getMac(message);
         super.send(message + new String(bytes));
-    }
+    }*/
 }

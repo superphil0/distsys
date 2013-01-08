@@ -5,12 +5,10 @@
 package Server;
 
 import Channel.Base64Channel;
-import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
 import Exceptions.AESException;
 import Exceptions.KeyNotFoundException;
-import Exceptions.WrongPasswordException;
 import Protocol.CommandProtocol;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -19,18 +17,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.util.encoders.Base64;
 
 /**
@@ -56,6 +50,7 @@ public class ServerThread extends Thread {
     private String loginBuffer;
     private boolean firstAESmsg = false;
     private String messageBuffer;
+    private String username;
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -74,6 +69,7 @@ public class ServerThread extends Thread {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
             secureChannel.setPrivKey(myPrivKey);
+            secureChannel.setPathToClientKeyDir(pathToClientKeyDir);
 
         } catch (IOException e) {
             out.println("Problem with In or Output - Connection.");
@@ -101,7 +97,7 @@ public class ServerThread extends Thread {
                 if (inputLine.startsWith("!login")) {
                     String[] input = inputLine.split(" ");
                     loginBuffer = input[0] + " " + input[1]; //!login username
-                    String username = input[1];
+                    username = input[1];
                     try {
                         //TODO set to secureChannel
                         clientPubKey = readClientsPubKey(pathToClientKeyDir, username);
@@ -119,25 +115,25 @@ public class ServerThread extends Thread {
 
                         sentServerChallenge = generateSecureRandom();
                         byte[] rndNr64 = encodeBase64(sentServerChallenge);
-                        String challenge = bytes2String(rndNr64);
+                        String challenge = new String(rndNr64);
                         outputLine += " " + challenge;
 
                         if (createSessionKey()) {
-                            String secKey = bytes2String(encodeBase64(sessionKey.getEncoded()));
+                            String secKey = new String(encodeBase64(sessionKey.getEncoded()));
                             outputLine += " " + secKey;
 
-                            String ivParam64 = bytes2String(encodeBase64(ivParam));
+                            String ivParam64 = new String(encodeBase64(ivParam));
                             outputLine += " " + ivParam64;
                             secureChannel.send(outputLine);
+                            System.out.println(">ServerThread sending: " + outputLine);
                             messageBuffer = outputLine;
                             processMsg = false;
                             try {
-                                secureChannel.setSessionKey(sessionKey, ivParam);
+                                secureChannel.setSessionKey(sessionKey, ivParam, username);
                                 firstAESmsg = true;
                             } catch (AESException ex) {
                                 System.err.println(ex.getMessage());
                             }
-                            System.out.println(">ServerThread sending: " + outputLine);
                         }
 
                     } catch (KeyNotFoundException ex) {
@@ -168,9 +164,11 @@ public class ServerThread extends Thread {
                         secureChannel.removeSessionKey();
                         secureChannel.setPrivKey(myPrivKey);
                     }
-                    
+
                     secureChannel.send(outputLine);
                     messageBuffer = outputLine;
+                    System.out.println(">ServerThread sending: " + outputLine);
+
                 }
 
             }
@@ -180,10 +178,12 @@ public class ServerThread extends Thread {
             System.err.println("Problem with connection.");
         } catch (NullPointerException e) {
             //Client closed Connection
+        } catch (Exception e) {
+            System.err.println("Sorry, an error occured...");
         } finally {
             close();
         }
-        
+
 
     }
 
@@ -235,14 +235,6 @@ public class ServerThread extends Thread {
     }
 
     //Helpers
-    private static byte[] string2Bytes(String message) {
-        return message.getBytes();
-    }
-
-    private static String bytes2String(byte[] byteMessage) {
-        return new String(byteMessage);
-    }
-
     private static byte[] encodeBase64(byte[] byteMessage) {
         byte[] base64Message = Base64.encode(byteMessage);
         return base64Message;

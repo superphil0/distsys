@@ -4,13 +4,10 @@
  */
 package Client;
 
-import Channel.IChannel;
 import Channel.SecureChannel;
 import Exceptions.AESException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -58,7 +55,7 @@ public class ClientThreadTCP extends Thread {
                         this.sessionKey = new SecretKeySpec(sKey, "AES");
                         this.ivParam = Client.decodeBase64(input[4].getBytes());
                         try {
-                            secureChannel.setSessionKey(sessionKey, ivParam);
+                            secureChannel.setSessionKey(sessionKey, ivParam, Client.getUsername());
                             secureChannel.send(input[2]);
                         } catch (AESException ex) {
                             System.err.println(ex.getMessage());

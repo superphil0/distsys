@@ -1,5 +1,6 @@
 package Channel;
 
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
@@ -9,7 +10,7 @@ public class test {
 
 	/**
 	 * @param args
-	 */
+	 *
 	public static void main(String[] args) {
 		KeyGenerator generator = null;
 		try {
@@ -20,12 +21,13 @@ public class test {
 		} 
 		// KEYSIZE is in bits 
 		generator.init(256); 
-		SecretKey key = generator.generateKey(); 
+		Key key = generator.generateKey(); 
 		HMac mac = new HMac(key);
 		byte[] bytes = mac.getMac("HHHHHHHHHHHHHAAAAAAAAAAAALLooo");
 		String message = new String(bytes);
 		System.out.println(message + "\n " + bytes.length );
 
 	}
+        * */
 
 }

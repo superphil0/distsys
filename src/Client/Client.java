@@ -5,13 +5,11 @@
 package Client;
 
 import Channel.Base64Channel;
-import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
 import Exceptions.KeyNotFoundException;
 import Exceptions.WrongPasswordException;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,8 +21,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.util.encoders.Base64;
@@ -48,6 +44,7 @@ public class Client {
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
     private static String messageBuffer;
+    private static String username;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
@@ -107,6 +104,7 @@ public class Client {
 
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
             secureChannel.setPubKey(serverPubKey);
+            secureChannel.setPathToClientKeyDir(pathToClientKeyDir);
             //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
             ClientThreadTCP ctTCP = new ClientThreadTCP();
 
@@ -137,7 +135,7 @@ public class Client {
                             //create client challenge
                             //base64 encode all parameters - decode am server how?!
                             //
-                            String username = fromUser.split(" ")[1];
+                            username = fromUser.split(" ")[1];
                             try {
                                 myPrivKey = getPrivateKey(username);
                                 if (myPrivKey != null) {
@@ -148,7 +146,7 @@ public class Client {
                                     myChallenge = generateSecureRandom();
                                     ctTCP.setClientChallenge(myChallenge);
                                     byte[] rndNr64 = encodeBase64(myChallenge);
-                                    String challenge = bytes2String(rndNr64);
+                                    String challenge = new String(rndNr64);
                                     fromUser += " " + challenge;
                                     sendMsg = true;
                                 }
@@ -242,6 +240,10 @@ public class Client {
 
     }
     
+    public static String getUsername() {
+        return username;
+    }
+    
     public static String getMessageBuffer() {
         return messageBuffer;
     }
@@ -251,14 +253,6 @@ public class Client {
     }
 
     //Helpers
-    public static byte[] string2Bytes(String message) {
-        return message.getBytes();
-    }
-
-    public static String bytes2String(byte[] byteMessage) {
-        return new String(byteMessage);
-    }
-
     public static byte[] encodeBase64(byte[] byteMessage) {
         byte[] base64Message = Base64.encode(byteMessage);
         return base64Message;
