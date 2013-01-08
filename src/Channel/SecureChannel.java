@@ -111,7 +111,7 @@ public class SecureChannel extends TCPChannel {
                 String hmac = new String(hmac64);
 
                 String encrypted = new String(aesCrypter.encryptAES(message.getBytes()));
-                String toSend = encrypted + " " + hmac;
+                String toSend = encrypted; //+ " " + hmac;
                 channel.send(toSend);
                 return;
             } catch (HMacException ex) {
@@ -157,25 +157,25 @@ public class SecureChannel extends TCPChannel {
         } else {//AES decryption
             System.out.println(">SecureChannel: AES decrypting");
             try {
-                String[] incoming = channel.receive().split(" "); //incoming message, already base 64 decoded
+                //String[] incoming = channel.receive().split(" "); //incoming message, already base 64 decoded
 
                 /*
                  System.arraycopy(bytes, bytes.length - 32, receivedMac, 0, 32);
                  System.arraycopy(bytes, 0, receivedMsg, 0, bytes.length - 32);
                  */
 
-                String receivedHmac = incoming[incoming.length - 1];
+                //String receivedHmac = incoming[incoming.length - 1];
 
-                String message = "";
-                for (int i = 0; i < incoming.length - 1; i++) {
+                String message = channel.receive();
+                /*for (int i = 0; i < incoming.length - 1; i++) {
                     message += incoming[i] + " ";
-                }
-                message = message.trim();
+                }*/
                 //System.out.println(">receiving: " + message);
                 String decrypted = new String(aesCrypter.decryptAES(message.getBytes()));
 
-                String generatedHmac = new String(Base64.encode(hmacGenerator.getMac(decrypted)));
-                System.out.println("received  " + receivedHmac + "\ngenerated " + generatedHmac);
+                //String generatedHmac = new String(Base64.encode(hmacGenerator.getMac(decrypted)));
+                //System.out.println("received  " + receivedHmac + "\ngenerated " + generatedHmac);
+                //System.out.println("equals: " + receivedHmac.equals(generatedHmac));
                 return decrypted;
 
                 //if (!MessageDigest.isEqual(receivedHmac, generatedHmac)) {
@@ -194,8 +194,8 @@ public class SecureChannel extends TCPChannel {
                  return ("");
                  }*/
 
-            } catch (HMacException ex) {
-                System.err.println(ex.getMessage());
+           // } catch (HMacException ex) {
+             //   System.err.println(ex.getMessage());
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
             }

@@ -17,8 +17,16 @@ public class HMac {
     private Mac hMac;
 
     public HMac(String pathToKeys, String username) throws HMacException {
-        String path = pathToKeys + "/" + username + ".key";
-        key = readKey(path);
+        try {
+            String path = pathToKeys + "/" + username + ".key";
+            key = readKey(path);
+            hMac = Mac.getInstance("HmacSHA256");
+            hMac.init(key);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new HMacException("HMac: No Such Algorithm");
+        } catch (InvalidKeyException ex) {
+            throw new HMacException("HMac: Invalid Key");
+        }
 
     }
 
@@ -28,16 +36,9 @@ public class HMac {
     }
 
     public byte[] getMac(String message) throws HMacException {
-        try {
-            hMac = Mac.getInstance("HmacSHA256");
-            hMac.init(key);
-            hMac.update(message.getBytes());
-            return hMac.doFinal();
-        } catch (NoSuchAlgorithmException ex) {
-            throw new HMacException("HMac: No Such Algorithm");
-        } catch (InvalidKeyException ex) {
-            throw new HMacException("HMac: Invalid Key");
-        }
+
+        hMac.update(message.getBytes());
+        return hMac.doFinal();
     }
 
     //path - username +ending included
