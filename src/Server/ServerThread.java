@@ -55,6 +55,7 @@ public class ServerThread extends Thread {
     private static SecureRandom secureRandom;
     private String loginBuffer;
     private boolean firstAESmsg = false;
+    private String messageBuffer;
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -128,6 +129,7 @@ public class ServerThread extends Thread {
                             String ivParam64 = bytes2String(encodeBase64(ivParam));
                             outputLine += " " + ivParam64;
                             secureChannel.send(outputLine);
+                            messageBuffer = outputLine;
                             processMsg = false;
                             try {
                                 secureChannel.setSessionKey(sessionKey, ivParam);
@@ -154,6 +156,8 @@ public class ServerThread extends Thread {
                         secureChannel.setPrivKey(myPrivKey);
                     }
 
+                } else if (inputLine.startsWith("!retransmit")) {
+                    outputLine = messageBuffer;
                 } else {
                     outputLine = cp.processInput(inputLine);
                 }
@@ -166,7 +170,7 @@ public class ServerThread extends Thread {
                     }
                     
                     secureChannel.send(outputLine);
-
+                    messageBuffer = outputLine;
                 }
 
             }
@@ -179,6 +183,7 @@ public class ServerThread extends Thread {
         } finally {
             close();
         }
+        
 
     }
 

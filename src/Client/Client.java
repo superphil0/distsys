@@ -47,6 +47,7 @@ public class Client {
     private static PrivateKey myPrivKey = null;
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
+    private static String messageBuffer;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
@@ -121,6 +122,7 @@ public class Client {
                 boolean sendMsg = true;
                 while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
                     sendMsg = true;
+                    messageBuffer = fromUser;
                     if (fromUser.equals("")) {
                         System.out.println("no input - please enter a command!");
                         sendMsg = false;
@@ -238,6 +240,10 @@ public class Client {
         privateKey = keyPair.getPrivate();
         return privateKey;
 
+    }
+    
+    public static String getMessageBuffer() {
+        return messageBuffer;
     }
 
     public static SecureChannel getSecureChannel() {

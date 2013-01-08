@@ -38,6 +38,7 @@ public class SecureChannel extends TCPChannel {
     private Cipher cDecrypt;
     private AES aesCrypter;
     private boolean logoutResponse;
+    private AESChannel aesChannel;
 
     /*
      c1=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");
@@ -111,6 +112,8 @@ public class SecureChannel extends TCPChannel {
                 System.err.println(ex.getMessage());
                 return;
             }
+            //aesChannel.send(message);
+
         }
         channel.send(message);
 
@@ -119,11 +122,12 @@ public class SecureChannel extends TCPChannel {
     public String receive() throws IOException {
         //System.out.println("step 3.1 receive decrypt");
 
-        String message = channel.receive(); //incoming message, already base 64 decoded
         //System.out.println("step 3.2 receive decrypt");
 
         //TODO Decrypt message here
         if (!hasSessionKey) { //RSA priv decryption
+            String message = channel.receive(); //incoming message, already base 64 decoded
+
             if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
                 return message;
@@ -146,11 +150,13 @@ public class SecureChannel extends TCPChannel {
 
         } else {
             try {
+                String message = channel.receive(); //incoming message, already base 64 decoded
                 //AES decryption
                 return new String(aesCrypter.decryptAES(message.getBytes()));
             } catch (AESException ex) {
                 System.err.println(ex.getMessage());
             }
+            //return aesChannel.receive();
         }
 
         listCommand = false;
@@ -213,6 +219,7 @@ public class SecureChannel extends TCPChannel {
         hasSessionKey = true;
         aesCrypter = new AES(secretKey, ivParameter);
         System.out.println(">SecureChannel: SessionKey set!");
+        aesChannel = new AESChannel((TCPChannel) channel, secretKey, ivParameter);
     }
 
     /**
