@@ -37,6 +37,7 @@ public class SecureChannel extends TCPChannel {
     private Cipher cEncrypt;
     private Cipher cDecrypt;
     private AES aesCrypter;
+    private boolean logoutResponse;
 
     /*
      c1=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");
@@ -79,7 +80,8 @@ public class SecureChannel extends TCPChannel {
                 listCommand = true;
                 channel.send(message);
                 return;
-            } else if (listCommand) {
+            } else if (listCommand || logoutResponse) {
+                logoutResponse = false;
                 listCommand = false;
                 channel.send(message);
                 return;
@@ -125,7 +127,8 @@ public class SecureChannel extends TCPChannel {
             if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
                 return message;
-            } else if (listCommand) {
+            } else if (listCommand || logoutResponse) {
+                logoutResponse = false;
                 listCommand = false;
                 return message;
             } else {
@@ -136,7 +139,7 @@ public class SecureChannel extends TCPChannel {
                     return decrypted;
                 } catch (Exception ex) {
                     System.out.println("Error while trying to decrypt Message...");
-                    Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -212,11 +215,18 @@ public class SecureChannel extends TCPChannel {
         System.out.println(">SecureChannel: SessionKey set!");
     }
 
-    //when logout
+    /**
+     * when logging out
+     */
     public void removeSessionKey() {
+        logoutResponse = true;
+
         secretKey = null;
         ivParameter = null;
         hasSessionKey = false;
         aesCrypter = null;
+
+        otherPubKey = null;
+        myPrivKey = null;
     }
 }

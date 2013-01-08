@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
@@ -52,6 +53,8 @@ public class ServerThread extends Thread {
     private SecretKey sessionKey;
     private byte[] ivParam;
     private static SecureRandom secureRandom;
+    private String loginBuffer;
+    private boolean firstAESmsg = false;
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -90,12 +93,13 @@ public class ServerThread extends Thread {
             //proccessing client input
             boolean processMsg;
             while ((inputLine = secureChannel.receive()) != null) {    //in.readLine()) != null) {
-                System.out.println(">received from User: "+inputLine);
+                System.out.println(">received from User: " + inputLine);
                 processMsg = true;
                 outputLine = "couldn't process input";
 
                 if (inputLine.startsWith("!login")) {
                     String[] input = inputLine.split(" ");
+                    loginBuffer = input[0] + " " + input[1]; //!login username
                     String username = input[1];
                     try {
                         //TODO set to secureChannel
@@ -112,19 +116,22 @@ public class ServerThread extends Thread {
 
                         outputLine = "!ok " + input[3]; // + other stuff
 
-                       sentServerChallenge = generateSecureRandom();
+                        sentServerChallenge = generateSecureRandom();
                         byte[] rndNr64 = encodeBase64(sentServerChallenge);
                         String challenge = bytes2String(rndNr64);
                         outputLine += " " + challenge;
-                        
+
                         if (createSessionKey()) {
                             String secKey = bytes2String(encodeBase64(sessionKey.getEncoded()));
                             outputLine += " " + secKey;
-                            
+
                             String ivParam64 = bytes2String(encodeBase64(ivParam));
                             outputLine += " " + ivParam64;
+                            secureChannel.send(outputLine);
+                            processMsg = false;
                             try {
                                 secureChannel.setSessionKey(sessionKey, ivParam);
+                                firstAESmsg = true;
                             } catch (AESException ex) {
                                 System.err.println(ex.getMessage());
                             }
@@ -136,13 +143,30 @@ public class ServerThread extends Thread {
                         //outputLine = ex.getMessage();
                         processMsg = false;
                     }
+                } else if (firstAESmsg) { //server challenge expected
+                    receivedServerChallenge = decodeBase64(inputLine.getBytes());
+                    if (Arrays.equals(sentServerChallenge, receivedServerChallenge)) {
+                        firstAESmsg = false;
+                        outputLine = cp.processInput(loginBuffer);
+                    } else {
+                        outputLine = "!failed to login. Sent und received Server Challenge dont conquer.";
+                        secureChannel.removeSessionKey();
+                        secureChannel.setPrivKey(myPrivKey);
+                    }
+
                 } else {
                     outputLine = cp.processInput(inputLine);
                 }
                 //System.out.println(outputLine);
                 //out.println(outputLine);
                 if (processMsg) {
+                    if (inputLine.startsWith("!logout")) {
+                        secureChannel.removeSessionKey();
+                        secureChannel.setPrivKey(myPrivKey);
+                    }
+                    
                     secureChannel.send(outputLine);
+
                 }
 
             }

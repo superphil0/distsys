@@ -34,7 +34,7 @@ import org.bouncycastle.util.encoders.Base64;
  * @author daniela
  */
 public class Client {
-    
+
     private static Socket socket = null;
     private static PrintWriter out = null;
     private static BufferedReader in = null;
@@ -47,7 +47,7 @@ public class Client {
     private static PrivateKey myPrivKey = null;
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
-    
+
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
 /*
@@ -72,10 +72,10 @@ public class Client {
                 socket = new Socket(host, tcpPort);
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                
+
                 System.out.println("Active Socket Connection to Server!");
                 ok = true;
-                
+
             } catch (NumberFormatException e) {                     //and udp
                 System.err.println("Please enter only Numbers for TCP Port.");
                 //System.exit(1);
@@ -87,8 +87,8 @@ public class Client {
                 //System.exit(1);
             }
         }
-        
-        
+
+
         if (ok) {
             try {
                 serverPubKey = readPublicServerKey(pathToServerKey);
@@ -108,13 +108,13 @@ public class Client {
             secureChannel.setPubKey(serverPubKey);
             //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
             ClientThreadTCP ctTCP = new ClientThreadTCP();
-            
+
             ctTCP.start();
 
             //User Input
             stdIn = new BufferedReader(new InputStreamReader(System.in));
             String fromUser;
-            
+
             try {
 
                 //receiving User-Commands until input is null --> shut down
@@ -124,7 +124,7 @@ public class Client {
                     if (fromUser.equals("")) {
                         System.out.println("no input - please enter a command!");
                         sendMsg = false;
-                        
+
                     } else if (fromUser.equals("!end")) {
                         break;//shut down
 
@@ -140,9 +140,9 @@ public class Client {
                                 myPrivKey = getPrivateKey(username);
                                 if (myPrivKey != null) {
                                     secureChannel.setPrivKey(myPrivKey);
-                                    
+
                                     fromUser += " " + clientPort;
-                                    
+
                                     myChallenge = generateSecureRandom();
                                     ctTCP.setClientChallenge(myChallenge);
                                     byte[] rndNr64 = encodeBase64(myChallenge);
@@ -157,18 +157,21 @@ public class Client {
                                 System.out.println(ex.getMessage());
                                 sendMsg = false;
                             }
-                            
+
                         }
-                        
+
                         if (sendMsg) {
                             //System.out.println(">sending: " + fromUser);
                             secureChannel.send(fromUser);
+                            if (fromUser.startsWith("!logout")) {
+                                secureChannel.removeSessionKey();
+                            }
                         }
-                        
+
                     }
-                    
+
                 }
-                
+
             } catch (IOException e) {
                 System.err.println("I/O Fehler");
             } finally {
@@ -177,9 +180,9 @@ public class Client {
         } else {
             close();
         }
-        
+
     }
-    
+
     private static PublicKey readPublicServerKey(String pathToServerKey) throws KeyNotFoundException {
         PublicKey publicKey = null;
         PEMReader in;
@@ -189,19 +192,19 @@ public class Client {
             //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             throw new KeyNotFoundException("Wrong path to Public Server Key");
         }
-        
+
         try {
             publicKey = (PublicKey) in.readObject();
         } catch (IOException ex) {
             throw new KeyNotFoundException("Couldn't read Key");
             //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return publicKey;
     }
-    
+
     private static PrivateKey getPrivateKey(String username) throws KeyNotFoundException, WrongPasswordException {
-        
+
         String pathToPrivKey = pathToClientKeyDir + "/" + username + ".pem";
         PrivateKey privateKey = null;
         PEMReader pemIn;
@@ -234,9 +237,9 @@ public class Client {
         }
         privateKey = keyPair.getPrivate();
         return privateKey;
-        
+
     }
-    
+
     public static SecureChannel getSecureChannel() {
         return secureChannel;
     }
@@ -245,39 +248,39 @@ public class Client {
     public static byte[] string2Bytes(String message) {
         return message.getBytes();
     }
-    
+
     public static String bytes2String(byte[] byteMessage) {
         return new String(byteMessage);
     }
-    
+
     public static byte[] encodeBase64(byte[] byteMessage) {
         byte[] base64Message = Base64.encode(byteMessage);
         return base64Message;
     }
-    
+
     public static byte[] decodeBase64(byte[] base64Message) {
         byte[] byteMessage = Base64.decode(base64Message);
         return byteMessage;
     }
-    
+
     private static byte[] generateSecureRandom() {
         // generates a 32 byte secure random number 
         SecureRandom secureRandom = new SecureRandom();
         final byte[] number = new byte[32];
         secureRandom.nextBytes(number);
         return number;
-        
+
     }
 
     // For secure connection - lab3
     public BufferedReader getInputReader() {
         return in;
     }
-    
+
     public PrintWriter getOutputWriter() {
         return out;
     }
-    
+
     private static void close() {
         try {
             out.close();

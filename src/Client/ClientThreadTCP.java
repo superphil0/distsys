@@ -60,6 +60,7 @@ public class ClientThreadTCP extends Thread {
                         this.ivParam = Client.decodeBase64(input[4].getBytes());
                         try {
                             secureChannel.setSessionKey(sessionKey, ivParam);
+                            secureChannel.send(input[2]);
                         } catch (AESException ex) {
                             System.err.println(ex.getMessage());
                         }
