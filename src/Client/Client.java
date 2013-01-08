@@ -47,6 +47,7 @@ public class Client {
     private static PrivateKey myPrivKey = null;
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
+    private static String username;
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
@@ -135,27 +136,36 @@ public class Client {
                             //create client challenge
                             //base64 encode all parameters - decode am server how?!
                             //
-                            String username = fromUser.split(" ")[1];
-                            try {
-                                myPrivKey = getPrivateKey(username);
-                                if (myPrivKey != null) {
-                                    secureChannel.setPrivKey(myPrivKey);
+                            if (fromUser.split(" ").length == 2 && !secureChannel.hasSessionKey()) {
+                                username = fromUser.split(" ")[1];
+                                try {
+                                    myPrivKey = getPrivateKey(username);
+                                    if (myPrivKey != null) {
+                                        secureChannel.setPrivKey(myPrivKey);
 
-                                    fromUser += " " + clientPort;
+                                        fromUser += " " + clientPort;
 
-                                    myChallenge = generateSecureRandom();
-                                    ctTCP.setClientChallenge(myChallenge);
-                                    byte[] rndNr64 = encodeBase64(myChallenge);
-                                    String challenge = bytes2String(rndNr64);
-                                    fromUser += " " + challenge;
-                                    sendMsg = true;
+                                        myChallenge = generateSecureRandom();
+                                        ctTCP.setClientChallenge(myChallenge);
+                                        byte[] rndNr64 = encodeBase64(myChallenge);
+                                        String challenge = bytes2String(rndNr64);
+                                        fromUser += " " + challenge;
+                                        sendMsg = true;
+                                    }
+                                } catch (KeyNotFoundException ex) {
+                                    System.out.println(ex.getMessage());
+                                    sendMsg = false;
+                                } catch (WrongPasswordException ex) {
+                                    System.out.println(ex.getMessage());
+                                    sendMsg = false;
                                 }
-                            } catch (KeyNotFoundException ex) {
-                                System.out.println(ex.getMessage());
+                            } else {
                                 sendMsg = false;
-                            } catch (WrongPasswordException ex) {
-                                System.out.println(ex.getMessage());
-                                sendMsg = false;
+                                if (secureChannel.hasSessionKey()) {
+                                    System.out.println("User " + username + " already logged in.");
+                                } else {
+                                    System.out.println("Usage: !login <username>");
+                                }
                             }
 
                         }
@@ -165,6 +175,7 @@ public class Client {
                             secureChannel.send(fromUser);
                             if (fromUser.startsWith("!logout")) {
                                 secureChannel.removeSessionKey();
+                                username = null;
                             }
                         }
 

@@ -167,17 +167,10 @@ public class SecureChannel extends TCPChannel {
 
     }
 
-    /*
-     if(publicKeyServer!=null)
-     c1.init(Cipher.ENCRYPT_MODE, publicKeyServer);
-     else 
-     throw new RSAAuthenticationException("Server Public Key is null!");
+    public boolean hasSessionKey() {
+        return hasSessionKey;
+    }
 
-     if(privateKeyClient!=null)
-     c2.init(Cipher.DECRYPT_MODE, privateKeyClient);
-     else 
-     throw new RSAAuthenticationException("Client Private Key is null!");
-     */
     public void setPrivKey(PrivateKey myPrivKey) {
         this.myPrivKey = myPrivKey;
         System.out.println(">SecureChannel: private key set!");
@@ -199,14 +192,9 @@ public class SecureChannel extends TCPChannel {
             cEncrypt.init(Cipher.ENCRYPT_MODE, otherPubKey);
         } catch (InvalidKeyException ex) {
             System.out.println(ex.getMessage());
-            //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /*public void setRSAKeys(PublicKey otherPubKey, PrivateKey myPrivKey) {
-     this.otherPubKey = otherPubKey;
-     this.myPrivKey = myPrivKey;
-     }*/
     public void setSessionKey(SecretKey secretKey, byte[] ivParameter) throws AESException {
         this.secretKey = secretKey;
         this.ivParameter = ivParameter;
@@ -216,7 +204,7 @@ public class SecureChannel extends TCPChannel {
     }
 
     /**
-     * when logging out
+     * logout
      */
     public void removeSessionKey() {
         logoutResponse = true;
