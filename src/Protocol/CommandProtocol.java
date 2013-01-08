@@ -5,9 +5,11 @@
 package Protocol;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import Auction.Auction;
 import Auction.AuctionHandler;
+import Auction.Bid;
 import PropertyReader.RegistryProperties;
 import Server.ServerThread;
 import User.User;
@@ -23,6 +25,7 @@ public class CommandProtocol {
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;
     private ServerThread serverThread = null;
+    private LinkedList<Bid> groupBids = LinkedList<Bid>();
     //private String analyticsBindingName, billingBindingName;
     //private static Registry rmiRegistry;
 
@@ -168,7 +171,38 @@ public class CommandProtocol {
                 }
 
 
-            } else if (strInput.equals("!logout")) {
+            } else if (strInput.startsWith("!groupBid"))
+            {
+           	 String[] args = strInput.split(" ");
+                int id;
+                double amount;
+                if (args.length != 3) {
+                    strOutput = "Error! Use correct command: !groupBid <auction-id> <amount>";
+                } else {
+                    try {
+                        id = Integer.parseInt(args[1]);
+                        amount = Double.parseDouble(args[2]);
+                        if (id < 0 || amount < 0) {
+                            throw new NumberFormatException();
+                        }
+                    } catch (NumberFormatException e) {
+                        strOutput = "Error! Command: !groupBid <id > 0> <amount > 0>";
+                        return strOutput;
+                    }
+                
+	                Auction a = auctionHandler.getAuction(id);
+	                if (a != null) {
+	                    
+	                } else {
+	                    strOutput = "No Auction with id " + id;
+	                }	                
+                }
+                
+           } else if (strInput.startsWith("!groupBid"))
+           {
+           	
+           }        
+           else if (strInput.equals("!logout")) {
                 /*try {
                     analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), currentUser.getUsername()));
                 } catch (RemoteException ex) {
@@ -182,7 +216,8 @@ public class CommandProtocol {
             } else if (strInput.startsWith("!login")) {
                 strOutput = "You're already logged in. "
                         + "You need to logout first, before you can login again!";
-            } else {
+            }     
+            else {            	
                 strOutput = printUsage();
             }
         }

@@ -4,18 +4,22 @@
  */
 package User;
 
+import java.util.EventObject;
+
+import Auction.GroupBidFinishedListener;
 import Server.ServerThread;
 
 /**
  *
  * @author daniela
  */
-public class User {
+public class User implements GroupBidFinishedListener{
     
     private static final int LOGGED_OUT = 0;
     private static final int LOGGED_IN = 1;
     private int state = LOGGED_OUT;
     private String username;
+    private ServerThread serverThread;
     //outstanding udp notifications
     //List<String> notifications;
     
@@ -30,6 +34,7 @@ public class User {
      */
     public synchronized void login(ServerThread serverThread) {
             state = LOGGED_IN;
+            this.serverThread = serverThread; 
     }
     
     public void logout() {
@@ -67,6 +72,11 @@ public class User {
     public String getUsername() {
         return username;
     }
+
+	@Override
+	public void handleMyEventClassEvent(EventObject e) {
+		//serverThread.send
+	}
     
     /*private long getSessionTime() {
         return logoutTimestamp - loginTimestamp;
