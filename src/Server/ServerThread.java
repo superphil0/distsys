@@ -179,7 +179,7 @@ public class ServerThread extends Thread {
         } catch (NullPointerException e) {
             //Client closed Connection
         } catch (Exception e) {
-            System.err.println("Sorry, an error occured...");
+            System.err.println("Sorry, an error occured..." + e.getStackTrace());
         } finally {
             close();
         }
