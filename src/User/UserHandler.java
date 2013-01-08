@@ -31,7 +31,10 @@ public class UserHandler {
     public static UserHandler getInstance() {
         return instance;
     }
-
+    public synchronized int getNumberofUsers()
+    {
+    	return allUsers.size();
+    }
     public User addUser(String name) {
         allUsers.put(name, new User(name));
         return getUser(name);

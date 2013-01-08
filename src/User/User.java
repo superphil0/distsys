@@ -74,8 +74,9 @@ public class User implements GroupBidFinishedListener{
     }
 
 	@Override
-	public void handleMyEventClassEvent(EventObject e) {
-		//serverThread.send
+	public void handleGroupBidFinished(EventObject e, boolean result) {
+		String message = result ? "!confirmed" : "!rejected";
+		serverThread.sendMessage(message);
 	}
     
     /*private long getSessionTime() {

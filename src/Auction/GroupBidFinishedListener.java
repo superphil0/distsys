@@ -4,7 +4,7 @@ import java.util.EventObject;
 
 public interface GroupBidFinishedListener {
 	
-        public void handleMyEventClassEvent(EventObject e);
+        public void handleGroupBidFinished(EventObject e, boolean result);
 }
 
 

@@ -16,11 +16,11 @@ public class GroupBidSource {
 
 		  // call this method whenever you want to notify
 		  //the event listeners of the particular event
-		  public synchronized void fireEvent()	{
-		    GroupBidFinished event = new GroupBidFinished(this);
+		  public synchronized void fireEvent(boolean result, Bid bid)	{
+		    GroupBidFinished event = new GroupBidFinished(this, bid);
 		    Iterator<GroupBidFinishedListener> i = listeners.iterator();
 		    while(i.hasNext())	{
-		      ((GroupBidFinishedListener) i.next()).handleMyEventClassEvent(event);
+		      ((GroupBidFinishedListener) i.next()).handleGroupBidFinished(event, result);
 		    }
 		  }
 }

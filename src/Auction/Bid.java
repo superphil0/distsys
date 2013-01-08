@@ -1,5 +1,7 @@
 package Auction;
 
+import java.util.LinkedList;
+
 import User.User;
 
 public class Bid {
@@ -11,34 +13,63 @@ public class Bid {
 		return auction;
 	}
 
-	int getAmount() {
+	double getAmount() {
 		return amount;
 	}
 
 	private User user;
 	private Auction auction;
-	private int amount;
+	private double amount;
 	private int confirms;
 	private GroupBidSource source;
+	private LinkedList<User> confirmants;
 	
-	public Bid(User user, Auction auction, int amount) {
+	public Bid(User user, Auction auction, double amount2) {
 		this.user = user;
 		this.auction = auction;
-		this.amount = amount;
+		this.amount = amount2;
 		source = new GroupBidSource();
+		confirmants = new LinkedList<User>();
 	}
-	public void confirm(User user)
+	public boolean confirm(User user, double amount, int auctionID)
 	{
+		if(confirmants.contains(user)) return false;
+		
 		confirms++;
 		source.addEventListener(user);
 		if(isConfirmed())
-		{
-			source.fireEvent();
+		{	
+				source.fireEvent(auction.bid(user, amount), this);
 		}
+		return true;
 	}
 	public boolean isConfirmed()
 	{
 		return confirms >=2;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Bid)
+		{
+			Bid bi = (Bid) obj;
+			if(bi.auction.getId() == this.auction.getId() 
+					&& this.user.getUsername() == bi.user.getUsername())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean equals(int id, String username, double amount)
+	{
+		if(id == this.auction.getId() 
+				&& this.user.getUsername() == username
+				&& this.amount == amount)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	
