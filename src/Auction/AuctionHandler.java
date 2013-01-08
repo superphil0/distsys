@@ -9,9 +9,13 @@ import Common.IBillingSecure;
 import Events.AuctionEvent;
 import Events.BidEvent;
 import User.User;
+import User.UserHandler;
+
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,14 +27,19 @@ public class AuctionHandler {
 
     private static AuctionHandler instance = new AuctionHandler();
     private static HashMap<Integer, Auction> auctionList = new HashMap<Integer, Auction>();
+    private LinkedList<User> biddingPriority;
+    private Bid reservedSpotUser = null;
     //endedAuctions with Notifications outstanding
 
     private static IAnalytics analyticsService;
 	private static IBillingSecure billingSecure;
+    private LinkedList<Bid> groupBids = new LinkedList<Bid>();
 
     private AuctionHandler() {
         //auctionList = new HashMap<Integer, Auction>();
         //endedAuctions = new HashMap<Integer, Auction>();
+    	biddingPriority = new LinkedList<User>();
+    	
     }
 
     public static AuctionHandler getInstance() {
@@ -45,7 +54,59 @@ public class AuctionHandler {
             analyticsService = as;
         }
     }
-
+    public boolean confirm(double amount, int id, String username,User user)
+    {
+    	for(Bid b : groupBids)
+    	{
+    		if(b.equals(id, username, amount))
+    		{
+    			return b.confirm(user, amount, id);
+    		}
+    	}
+    	return false;
+    }
+    public synchronized boolean addGroupBid(Bid bid)
+    {
+    	// this is also the entry point to guarentee fairness
+    	// Preventing deadlocks, because always at least one user is free
+    	// if we only allow users -1 bids at the same time
+    	
+    	// in order to prevent starvation we have a queue that keeps track of the 
+    	// users who have failed to create a group bid lately
+    	// there is one spot out of the number of users reserved for this queue
+    	
+    	if(groupBids.size() -2 < UserHandler.getInstance().getNumberofUsers())
+    	{
+    		this.groupBids.add(bid);
+    		return true;
+    	}
+    	else if(biddingPriority.isEmpty() && reservedSpotUser == null)
+    	{
+    		this.groupBids.add(bid);
+    		reservedSpotUser = bid;
+    	}
+    	else if (biddingPriority.peekFirst() == bid.getUser())
+    	{
+    		if(reservedSpotUser == null) 
+    		{
+    			reservedSpotUser = bid;
+    			groupBids.add(bid);
+    			biddingPriority.removeFirst();
+    		}
+    	}
+    	else
+    	{
+    		if(!biddingPriority.contains(bid.getUser()))
+    			biddingPriority.add(bid.getUser());
+    	}
+    	return false;
+    }
+    
+    public synchronized void removeGroupBid(Bid bid)
+    {
+    	this.groupBids.remove(bid);
+    	if(bid == reservedSpotUser) reservedSpotUser = null;
+    }
     public synchronized void endAuction(Auction a) {
         if (a.getHighestBidder() != null) {
 

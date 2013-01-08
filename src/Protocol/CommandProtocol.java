@@ -5,11 +5,14 @@
 package Protocol;
 
 import java.util.Collection;
+import java.util.EventObject;
 import java.util.LinkedList;
 
 import Auction.Auction;
 import Auction.AuctionHandler;
 import Auction.Bid;
+import Auction.GroupBidFinished;
+import Auction.GroupBidFinishedListener;
 import PropertyReader.RegistryProperties;
 import Server.ServerThread;
 import User.User;
@@ -19,13 +22,13 @@ import User.UserHandler;
  *
  * @author daniela
  */
-public class CommandProtocol {
+public class CommandProtocol implements GroupBidFinishedListener{
 
     private User currentUser = null;
     private UserHandler userHandler;
     private AuctionHandler auctionHandler;
     private ServerThread serverThread = null;
-    private LinkedList<Bid> groupBids = new LinkedList<Bid>();
+
     //private String analyticsBindingName, billingBindingName;
     //private static Registry rmiRegistry;
 
@@ -192,16 +195,43 @@ public class CommandProtocol {
                 
 	                Auction a = auctionHandler.getAuction(id);
 	                if (a != null) {
-	                    
+	                    if(!auctionHandler.addGroupBid(new Bid(currentUser, a, amount)))
+	                    	strOutput = "!Rejected Too many groupBids at this moment";
 	                } else {
 	                    strOutput = "No Auction with id " + id;
 	                }	                
                 }
                 
-           } else if (strInput.startsWith("!groupBid"))
+           } else if (strInput.startsWith("!confirm"))
            {
-           	
-           }        
+        	   String[] args = strInput.split(" ");
+               int id;
+               double amount;
+               String username;
+               if (args.length != 4) {
+                   strOutput = "Error! Use correct command: !confirm <auction-id> <amount> <user who placed bid>";
+               } else {
+                   try {
+                       id = Integer.parseInt(args[1]);
+                       amount = Double.parseDouble(args[2]);
+                       if (id < 0 || amount < 0) {
+                           throw new NumberFormatException();
+                       }
+                   } catch (NumberFormatException e) {
+                       strOutput = "Error! Command: !groupBid <id > 0> <amount > 0>";
+                       return strOutput;
+                   }
+                   username = args[3];
+           			
+                   if(auctionHandler.confirm(amount, id, username, currentUser))
+                   {
+                	   strOutput = "!confirmed";
+                   }
+                   else
+                	   strOutput = "!rejected couldnt find that bid";
+               }
+               
+           }
            else if (strInput.equals("!logout")) {
                 /*try {
                     analyticsService.processEvent(new UserEvent("USER_LOGOUT", new Date().getTime(), currentUser.getUsername()));
@@ -252,7 +282,7 @@ public class CommandProtocol {
         }
         return list;
     }
-
+   
     private String printUsage() {
         if (currentUser == null) {
             return "Unknown Command!"
@@ -267,4 +297,11 @@ public class CommandProtocol {
         }
 
     }
+
+	
+    @Override
+	public void handleGroupBidFinished(EventObject e, boolean result) {
+		GroupBidFinished bid = (GroupBidFinished) e;
+		auctionHandler.removeGroupBid(bid.getBid());		
+	}
 }

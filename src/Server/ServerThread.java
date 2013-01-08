@@ -186,7 +186,10 @@ public class ServerThread extends Thread {
 
 
     }
-
+    public void sendMessage(String message)
+    {
+    	secureChannel.send(message);
+    }
     private PublicKey readClientsPubKey(String pathToClientKeyDir, String userName) throws KeyNotFoundException {
         String pathToPublicKey = pathToClientKeyDir + "/" + userName + ".pub.pem";
         PublicKey publicKey = null;
