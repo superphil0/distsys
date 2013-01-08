@@ -69,7 +69,15 @@ public class UserHandler {
         }
         allUsers.remove(user);
     }
-
+    public String getUserList()
+    {
+    	String ret = "";
+    	for(User u : allUsers.values())
+    	{
+    		ret+= u+"\n";
+    	}
+    	return ret;
+    }
     public static synchronized void setAS(IAnalytics as) {
         if (analyticsService == null) {
             analyticsService = as;

@@ -141,7 +141,12 @@ public class CommandProtocol implements GroupBidFinishedListener{
                             + auction.getEndDate().toString() + ".";
 
                 }
-            } else if (strInput.startsWith("!bid")) {
+            } 
+            else if (strInput.startsWith("!getClientList")) {
+            	strOutput = userHandler.getUserList();
+            	
+            }
+            else if (strInput.startsWith("!bid")) {
                 //TODO check params + bid
                 //!bid <auction-id> <amount>
                 String[] args = strInput.split(" ");

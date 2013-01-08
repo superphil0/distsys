@@ -4,6 +4,7 @@
  */
 package User;
 
+import java.net.Socket;
 import java.util.EventObject;
 
 import Auction.GroupBidFinishedListener;
@@ -79,6 +80,11 @@ public class User implements GroupBidFinishedListener{
 		serverThread.sendMessage(message);
 	}
     
+	@Override
+	public String toString() {
+		Socket socket = serverThread.getSocket();
+		return socket.getInetAddress().getHostAddress() + ":"+socket.getPort() + " - " + username;
+	}
     /*private long getSessionTime() {
         return logoutTimestamp - loginTimestamp;
     }*/

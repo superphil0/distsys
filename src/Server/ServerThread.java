@@ -35,7 +35,11 @@ import org.bouncycastle.util.encoders.Base64;
 public class ServerThread extends Thread {
 
     private Socket socket = null;
-    private PrintWriter out;
+    public Socket getSocket() {
+		return socket;
+	}
+
+	private PrintWriter out;
     private BufferedReader in;
     private CommandProtocol cp;
     private SecureChannel secureChannel;
