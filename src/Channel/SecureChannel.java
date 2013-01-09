@@ -44,17 +44,14 @@ public class SecureChannel extends TCPChannel {
     private boolean logoutResponse;
     private String username, path;
     private HMac hmac;
+    private int resendCounter = 0;
 
-    /*
-     c1=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");
-     c2=Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding","BC");*/
     public SecureChannel(PrintWriter out, BufferedReader in) {
         super(out, in);
         initCipher();
 
     }
 
-    //to delete?
     public SecureChannel(TCPChannel channel) {
         super(channel);
         this.channel = channel;
@@ -66,7 +63,7 @@ public class SecureChannel extends TCPChannel {
         try {
             cEncrypt = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding", "BC");
             cDecrypt = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding", "BC");
-            System.out.println(">SecureChannel: Cipher algorithm found! ");
+            //System.out.println(">SecureChannel: Cipher algorithm found! ");
         } catch (NoSuchAlgorithmException ex) {
             System.err.println("RSA: No Such Algorithm.");
         } catch (NoSuchProviderException ex) {
@@ -77,8 +74,6 @@ public class SecureChannel extends TCPChannel {
     }
 
     public void send(String message) {
-        //System.out.println("step 1 sec");
-        //TODO Encrypt message here
 
         if (!hasSessionKey) { //RSA pub encryption
 
@@ -95,11 +90,10 @@ public class SecureChannel extends TCPChannel {
                 //encrypt RSA
                 try {
                     String encrypted = new String(cEncrypt.doFinal(message.getBytes()));
-                    System.out.println(">encrypting: " + message);
+                    //System.out.println(">encrypting: " + message);
                     channel.send(encrypted);
                     return;
                 } catch (Exception ex) {
-                    //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error while trying to encrypt Message... please try again!");
                 }
 
@@ -117,23 +111,19 @@ public class SecureChannel extends TCPChannel {
                 channel.send(msg64 + " " + hmac);
                 return;
             } catch (HMacException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println("HMacEx: " + ex.getMessage());
             } catch (AESException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println("AES :" + ex.getMessage());
                 return;
             }
         }
-        //channel.send(message);
 
     }
 
     public String receive() throws IOException {
-        //System.out.println("step 3.1 receive decrypt");
 
         String message = channel.receive(); //incoming message, already base 64 decoded
-        //System.out.println("step 3.2 receive decrypt");
 
-        //TODO Decrypt message here
         if (!hasSessionKey) { //RSA priv decryption
             if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
@@ -150,26 +140,30 @@ public class SecureChannel extends TCPChannel {
                     return decrypted;
                 } catch (Exception ex) {
                     System.out.println("Error while trying to decrypt Message...");
-                    //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
-/*
- String encryptedMessage = new String(aesCrypter.encryptAES(message.getBytes()));
-                String hmac = generateMac(message);
-                String msg64 = Base64.encode(encryptedMessage.getBytes());
-                channel.send(msg64 + " " + hmac);*/
         } else {
             try {
                 //AES decryption
                 String msg64 = message.split(" ")[0];
-                String rhmac = message.split(" ")[1]; 
+                String rhmac = message.split(" ")[1];
                 String plainText = new String(aesCrypter.decryptAES(Base64.decode(msg64)));
                 String ghmac = generateMac(plainText);
-                System.out.println("rhmac: " + rhmac);
-                System.out.println("ghmac: " + ghmac);
-                
-                return plainText;
+                //System.out.println("rhmac: " + rhmac);
+                //System.out.println("ghmac: " + ghmac);
+
+                if (rhmac.equals(ghmac)) {
+                    resendCounter = 0;
+                    return plainText;
+                } else if(resendCounter <1) {
+                    //send("!resend");
+                    send(plainText);
+                    resendCounter++;
+                    return "!resending";
+                } else {
+                    return "Receiving Message failed. Macs differ.";
+                }
                 //return new String(aesCrypter.decryptAES(message.getBytes()));
             } catch (HMacException ex) {
                 System.err.println(ex.getMessage());
@@ -186,8 +180,7 @@ public class SecureChannel extends TCPChannel {
 
 
     }
-    
-    
+
     /*
      * generates a String version of a Hex encoded HMac
      */
@@ -206,18 +199,18 @@ public class SecureChannel extends TCPChannel {
     public boolean hasSessionKey() {
         return hasSessionKey;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public void setPath(String path) {
         this.path = path;
     }
 
     public void setPrivKey(PrivateKey myPrivKey) {
         this.myPrivKey = myPrivKey;
-        System.out.println(">SecureChannel: private key set!");
+        //System.out.println(">SecureChannel: private key set!");
         if (myPrivKey == null) {
             System.out.println("no priv key found <.<");
         }
@@ -225,13 +218,12 @@ public class SecureChannel extends TCPChannel {
             cDecrypt.init(Cipher.DECRYPT_MODE, myPrivKey);
         } catch (InvalidKeyException ex) {
             System.out.println(ex.getMessage());
-            //Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void setPubKey(PublicKey otherPubKey) {
         this.otherPubKey = otherPubKey;
-        System.out.println(">SecureChannel: public key set!");
+        //System.out.println(">SecureChannel: public key set!");
         try {
             cEncrypt.init(Cipher.ENCRYPT_MODE, otherPubKey);
         } catch (InvalidKeyException ex) {
@@ -244,7 +236,7 @@ public class SecureChannel extends TCPChannel {
         this.ivParameter = ivParameter;
         hasSessionKey = true;
         aesCrypter = new AES(secretKey, ivParameter);
-        System.out.println(">SecureChannel: SessionKey set!");
+        //System.out.println(">SecureChannel: SessionKey set!");
         hmac = new HMac(path, username);
     }
 
@@ -261,7 +253,7 @@ public class SecureChannel extends TCPChannel {
 
         otherPubKey = null;
         myPrivKey = null;
-        
+
         hmac = null;
         username = null;
         path = null;

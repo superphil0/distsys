@@ -282,6 +282,10 @@ public class Client {
         return number;
 
     }
+    
+    public static String getMessageBuffer() {
+        return messageBuffer;
+    }
 
     // For secure connection - lab3
     public BufferedReader getInputReader() {

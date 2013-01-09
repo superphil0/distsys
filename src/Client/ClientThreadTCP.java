@@ -42,8 +42,8 @@ public class ClientThreadTCP extends Thread {
             while ((fromServer = secureChannel.receive()) != null) {
                 if (fromServer.startsWith("!ok")) {
                     //TODO compare client challenge, get server challenge
-                    System.out.println(">ClientTreadTCP: ok received");
-                    System.out.println(fromServer);
+                    //System.out.println(">ClientTreadTCP: ok received");
+                    //System.out.println(fromServer);
                     String[] input = fromServer.split(" ");
                     receivedClientChallenge = Client.decodeBase64(input[1].getBytes());
 
@@ -65,8 +65,10 @@ public class ClientThreadTCP extends Thread {
                     }
                     //System.out.println(fromServer);
 
-                } else if (fromServer.startsWith("!resend")) {
-                    //TODO resend last command
+                } else if (fromServer.startsWith("!resending")) { //do nothing and wait for resending
+                    //System.out.println("resending: " + Client.getMessageBuffer());
+                    //secureChannel.send(Client.getMessageBuffer());
+                    
                 } else {
                     System.out.println(fromServer);
                 }

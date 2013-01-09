@@ -5,13 +5,11 @@
 package Server;
 
 import Channel.Base64Channel;
-import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
 import Exceptions.AESException;
 import Exceptions.HMacException;
 import Exceptions.KeyNotFoundException;
-import Exceptions.WrongPasswordException;
 import Protocol.CommandProtocol;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,18 +18,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.util.encoders.Base64;
 
 /**
@@ -56,6 +50,7 @@ public class ServerThread extends Thread {
     private static SecureRandom secureRandom;
     private String loginBuffer;
     private boolean firstAESmsg = false;
+    private String messageBuffer;
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -94,7 +89,7 @@ public class ServerThread extends Thread {
             //proccessing client input
             boolean processMsg;
             while ((inputLine = secureChannel.receive()) != null) {    //in.readLine()) != null) {
-                System.out.println(">received from User: " + inputLine);
+                //System.out.println(">received from User: " + inputLine);
                 processMsg = true;
                 outputLine = "couldn't process input";
 
@@ -140,7 +135,7 @@ public class ServerThread extends Thread {
                             } catch (AESException ex) {
                                 System.err.println(ex.getMessage());
                             }
-                            System.out.println(">ServerThread sending: " + outputLine);
+                            //System.out.println(">ServerThread sending: " + outputLine);
                         }
 
                     } catch (KeyNotFoundException ex) {
@@ -159,7 +154,12 @@ public class ServerThread extends Thread {
                         secureChannel.setPrivKey(myPrivKey);
                     }
 
-                } else {
+                } else if(inputLine.startsWith("!resending")) { //do nothing and wait for new msg
+                    //System.out.println("resending: " + messageBuffer);
+                    //secureChannel.send(messageBuffer);
+                    processMsg = false;
+
+                }else {
                     outputLine = cp.processInput(inputLine);
                 }
                 //System.out.println(outputLine);
@@ -171,6 +171,7 @@ public class ServerThread extends Thread {
                     }
                     
                     secureChannel.send(outputLine);
+                    messageBuffer = outputLine;
 
                 }
 
