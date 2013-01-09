@@ -8,10 +8,7 @@ package Client;
  *
  * @author daniela
  */
-public interface IClientCallback {
-    
-    public byte[] getClientChallenge();
-    
-    public void resendLastCommand();
+public interface IResend {
+    public void resendMessage();
     
 }

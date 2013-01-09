@@ -5,15 +5,18 @@
 package Client;
 
 import Channel.Base64Channel;
+import Channel.IChannel;
 import Channel.SecureChannel;
 import Channel.TCPChannel;
 import Exceptions.KeyNotFoundException;
 import Exceptions.WrongPasswordException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -43,17 +46,13 @@ public class Client {
     private static PrivateKey myPrivKey = null;
     private static String pathToServerKey, pathToClientKeyDir;
     private static byte[] myChallenge, serverChallenge;
-    private static String messageBuffer;
     private static String username;
+    private static String messageBuffer;
+    private final static String CHARSET  ="UTF-8";
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
-/*
-         <arg value="${server.host}"/>
-         <arg value="${server.port}"/>
-         <arg value="${client1.port}"/>
-         <arg value="${server.key.pub}"/>
-         <arg value="${clients.key.dir}"/>*/
+
         if (args.length != 5) {
             System.out.println("Invalid input arguments!"
                     + "Please enter hostname, hostport, clientport, pathToServerKey, clientKeyDir to start this client.");
@@ -68,8 +67,9 @@ public class Client {
 
                 //TCP Connection
                 socket = new Socket(host, tcpPort);
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+               
+                out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), CHARSET ), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), CHARSET));
 
                 System.out.println("Active Socket Connection to Server!");
                 ok = true;
@@ -104,7 +104,6 @@ public class Client {
 
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
             secureChannel.setPubKey(serverPubKey);
-            secureChannel.setPathToClientKeyDir(pathToClientKeyDir);
             //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
             ClientThreadTCP ctTCP = new ClientThreadTCP();
 
@@ -120,7 +119,6 @@ public class Client {
                 boolean sendMsg = true;
                 while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
                     sendMsg = true;
-                    messageBuffer = fromUser;
                     if (fromUser.equals("")) {
                         System.out.println("no input - please enter a command!");
                         sendMsg = false;
@@ -128,8 +126,235 @@ public class Client {
                     } else if (fromUser.equals("!end")) {
                         break;//shut down
 
-                    }   else if (fromUser.equals("!login")&& secureChannel.hasSessionKey()) {
-                        System.out.println("Already loggen in as "+ username);
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
 
                     } else {
                         if (fromUser.startsWith("!login")) {
@@ -138,33 +363,38 @@ public class Client {
                             //create client challenge
                             //base64 encode all parameters - decode am server how?!
                             //
-                            String[] input = fromUser.split(" ");
-                            if(input.length == 2) {
-                            username = fromUser.split(" ")[1];
-                            try {
-                                myPrivKey = getPrivateKey(username);
-                                if (myPrivKey != null) {
-                                    secureChannel.setPrivKey(myPrivKey);
+                            if (fromUser.split(" ").length == 2 && !secureChannel.hasSessionKey()) {
+                                username = fromUser.split(" ")[1];
+                                try {
+                                    myPrivKey = getPrivateKey(username);
+                                    if (myPrivKey != null) {
+                                        secureChannel.setPrivKey(myPrivKey);
 
-                                    fromUser += " " + clientPort;
+                                        fromUser += " " + clientPort;
 
-                                    myChallenge = generateSecureRandom();
-                                    ctTCP.setClientChallenge(myChallenge);
-                                    byte[] rndNr64 = encodeBase64(myChallenge);
-                                    String challenge = new String(rndNr64);
-                                    fromUser += " " + challenge;
-                                    sendMsg = true;
+                                        myChallenge = generateSecureRandom();
+                                        ctTCP.setClientChallenge(myChallenge);
+                                        byte[] rndNr64 = encodeBase64(myChallenge);
+                                        String challenge = bytes2String(rndNr64);
+                                        fromUser += " " + challenge;
+                                        secureChannel.setUsername(username);
+                                        secureChannel.setPath(pathToClientKeyDir);
+                                        sendMsg = true;
+                                    }
+                                } catch (KeyNotFoundException ex) {
+                                    System.out.println(ex.getMessage());
+                                    sendMsg = false;
+                                } catch (WrongPasswordException ex) {
+                                    System.out.println(ex.getMessage());
+                                    sendMsg = false;
                                 }
-                            } catch (KeyNotFoundException ex) {
-                                System.out.println(ex.getMessage());
-                                sendMsg = false;
-                            } catch (WrongPasswordException ex) {
-                                System.out.println(ex.getMessage());
-                                sendMsg = false;
-                            }
                             } else {
                                 sendMsg = false;
-                                System.out.println("Missing username! Please enter !login <username>");
+                                if (secureChannel.hasSessionKey()) {
+                                    System.out.println("User " + username + " already logged in.");
+                                } else {
+                                    System.out.println("Usage: !login <username>");
+                                }
                             }
 
                         }
@@ -172,8 +402,11 @@ public class Client {
                         if (sendMsg) {
                             //System.out.println(">sending: " + fromUser);
                             secureChannel.send(fromUser);
+                            messageBuffer = fromUser;
+                            
                             if (fromUser.startsWith("!logout")) {
                                 secureChannel.removeSessionKey();
+                                username = null;
                             }
                         }
 
@@ -223,7 +456,9 @@ public class Client {
                     // reads the password from standard input for decrypting the private key
                     System.out.println("Enter pass phrase:");
                     try {
-                        return stdIn.readLine().toCharArray();
+                    	char[] pw = stdIn.readLine().toCharArray();
+                    	System.out.println(">in pw: " + pw.toString());
+                        return pw;
                     } catch (IOException ex) {
                         //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
                         return null;
@@ -236,7 +471,7 @@ public class Client {
         } catch (FileNotFoundException ex) {
             throw new KeyNotFoundException("No private key found. Login not possible.");
             //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
         KeyPair keyPair;
         try {
             keyPair = (KeyPair) pemIn.readObject();
@@ -248,20 +483,20 @@ public class Client {
         return privateKey;
 
     }
-    
-    public static String getUsername() {
-        return username;
-    }
-    
-    public static String getMessageBuffer() {
-        return messageBuffer;
-    }
 
     public static SecureChannel getSecureChannel() {
         return secureChannel;
     }
 
     //Helpers
+    public static byte[] string2Bytes(String message) {
+        return message.getBytes();
+    }
+
+    public static String bytes2String(byte[] byteMessage) {
+        return new String(byteMessage);
+    }
+
     public static byte[] encodeBase64(byte[] byteMessage) {
         byte[] base64Message = Base64.encode(byteMessage);
         return base64Message;
@@ -279,6 +514,10 @@ public class Client {
         secureRandom.nextBytes(number);
         return number;
 
+    }
+    
+    public static String getMessageBuffer() {
+        return messageBuffer;
     }
 
     // For secure connection - lab3

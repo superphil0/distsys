@@ -15,6 +15,9 @@ import java.io.InputStreamReader;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PasswordFinder;
 
@@ -103,9 +106,11 @@ public class ServerStartUp {
                     // reads the password from standard input for decrypting the private key
                     System.out.println("Enter pass phrase:");
                     try {
-                        return new BufferedReader(new InputStreamReader(System.in)).readLine().toCharArray();
+                    	char[] pw = new BufferedReader(new InputStreamReader(System.in)).readLine().toCharArray();
+                    	//System.out.println(">input pw: " + pw.toString());
+                        return pw;
                     } catch (IOException ex) {
-                        //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
                         return null;
                     }
                 }
@@ -114,15 +119,19 @@ public class ServerStartUp {
                 throw new KeyNotFoundException("Couldn't read Key");
             }
         } catch (FileNotFoundException ex) {
+            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+
             throw new KeyNotFoundException("Wrong path to Private Server Key");
-            //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         KeyPair keyPair;
         try {
             keyPair = (KeyPair) in.readObject();
         } catch (IOException ex) {
+            ///Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+
             throw new WrongPasswordException("Wrong Password, please try again!");
-            //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        	
         }
         privateKey = keyPair.getPrivate();
         return privateKey;

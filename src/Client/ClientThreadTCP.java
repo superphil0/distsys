@@ -6,6 +6,7 @@ package Client;
 
 import Channel.SecureChannel;
 import Exceptions.AESException;
+import Exceptions.HMacException;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
@@ -25,11 +26,7 @@ public class ClientThreadTCP extends Thread {
     private byte[] sentClientChallenge, receivedClientChallenge;
     private SecretKey sessionKey;
     private byte[] ivParam;
-    // private byte[] serverChallenge;
 
-    /*public ClientThreadTCP (BufferedReader in) {
-     this.in = in;
-     }*/
     public ClientThreadTCP() {
         secureChannel = clientCallback.getSecureChannel();
     }
@@ -45,8 +42,8 @@ public class ClientThreadTCP extends Thread {
             while ((fromServer = secureChannel.receive()) != null) {
                 if (fromServer.startsWith("!ok")) {
                     //TODO compare client challenge, get server challenge
-                    System.out.println(">ClientTreadTCP: ok received");
-                    System.out.println(fromServer);
+                    //System.out.println(">ClientTreadTCP: ok received");
+                    //System.out.println(fromServer);
                     String[] input = fromServer.split(" ");
                     receivedClientChallenge = Client.decodeBase64(input[1].getBytes());
 
@@ -55,8 +52,10 @@ public class ClientThreadTCP extends Thread {
                         this.sessionKey = new SecretKeySpec(sKey, "AES");
                         this.ivParam = Client.decodeBase64(input[4].getBytes());
                         try {
-                            secureChannel.setSessionKey(sessionKey, ivParam, Client.getUsername());
+                            secureChannel.setSessionKey(sessionKey, ivParam);
                             secureChannel.send(input[2]);
+                        } catch (HMacException ex) {
+                            System.err.println(ex.getMessage());
                         } catch (AESException ex) {
                             System.err.println(ex.getMessage());
                         }
@@ -66,9 +65,10 @@ public class ClientThreadTCP extends Thread {
                     }
                     //System.out.println(fromServer);
 
-                } else if (fromServer.startsWith("!retransmit")) {
-                    //TODO resend last command
-                    secureChannel.send(Client.getMessageBuffer());
+                } else if (fromServer.startsWith("!resending")) { //do nothing and wait for resending
+                    //System.out.println("resending: " + Client.getMessageBuffer());
+                    //secureChannel.send(Client.getMessageBuffer());
+                    
                 } else {
                     System.out.println(fromServer);
                 }
