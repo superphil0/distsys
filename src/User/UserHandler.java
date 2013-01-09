@@ -31,7 +31,10 @@ public class UserHandler {
     public static UserHandler getInstance() {
         return instance;
     }
-
+    public synchronized int getNumberofUsers()
+    {
+    	return allUsers.size();
+    }
     public User addUser(String name) {
         allUsers.put(name, new User(name));
         return getUser(name);
@@ -64,8 +67,17 @@ public class UserHandler {
         } catch (NullPointerException npe) {
             //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
         }
+        allUsers.remove(user);
     }
-
+    public String getUserList()
+    {
+    	String ret = "";
+    	for(User u : allUsers.values())
+    	{
+    		ret+= u+"\n";
+    	}
+    	return ret;
+    }
     public static synchronized void setAS(IAnalytics as) {
         if (analyticsService == null) {
             analyticsService = as;

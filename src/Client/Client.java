@@ -24,8 +24,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.util.encoders.Base64;
@@ -118,6 +116,236 @@ public class Client {
             try {
 
                 //receiving User-Commands until input is null --> shut down
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
+                boolean sendMsg = true;
+                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                    sendMsg = true;
+                    if (fromUser.equals("")) {
+                        System.out.println("no input - please enter a command!");
+                        sendMsg = false;
+
+                    } else if (fromUser.equals("!end")) {
+                        break;//shut down
+
                 boolean sendMsg = true;
                 while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
                     sendMsg = true;
