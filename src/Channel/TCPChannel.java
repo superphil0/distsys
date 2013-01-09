@@ -39,12 +39,12 @@ public class TCPChannel implements IChannel {
     }
 
     public void send(String message) {
-        System.out.println("step 3 send");
+        //System.out.println("step 3 send");
         out.println(message);
     }
 
     public String receive() throws IOException {
-        System.out.println("step 1 receive tcp");
+        //System.out.println("step 1 receive tcp");
         return in.readLine();
     }
 

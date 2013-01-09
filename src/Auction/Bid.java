@@ -39,7 +39,7 @@ public class Bid {
 		source.addEventListener(user);
 		if(isConfirmed())
 		{	
-				source.fireEvent(auction.bid(user, amount), this);
+			source.fireEvent(auction.bid(user, amount), this);
 		}
 		return true;
 	}
@@ -64,7 +64,7 @@ public class Bid {
 	public boolean equals(int id, String username, double amount)
 	{
 		if(id == this.auction.getId() 
-				&& this.user.getUsername() == username
+				&& this.user.getUsername().equals(username)
 				&& this.amount == amount)
 		{
 			return true;

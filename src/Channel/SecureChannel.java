@@ -74,6 +74,7 @@ public class SecureChannel extends TCPChannel {
     }
 
     public void send(String message) {
+    	System.out.println("Sending :" + message);
     	channel.send(message);
     	/*
     	System.out.println(">sending: " + message);

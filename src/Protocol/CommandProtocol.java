@@ -202,6 +202,8 @@ public class CommandProtocol implements GroupBidFinishedListener{
 	                if (a != null) {
 	                    if(!auctionHandler.addGroupBid(new Bid(currentUser, a, amount)))
 	                    	strOutput = "!Rejected Too many groupBids at this moment";
+	                    else
+	                    	strOutput = "Your grouBid was stored ";
 	                } else {
 	                    strOutput = "No Auction with id " + id;
 	                }	                

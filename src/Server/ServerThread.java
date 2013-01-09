@@ -269,4 +269,13 @@ public class ServerThread extends Thread {
             System.err.println("Problem with disconnection from " + socket.getInetAddress().toString());
         }
     }
+
+	public Socket getSocket() {
+		// TODO Auto-generated method stub
+		return socket;
+	}
+
+	public void sendMessage(String message) {
+		secureChannel.send(message);
+	}
 }
