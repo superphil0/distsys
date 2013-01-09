@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
@@ -51,6 +52,8 @@ public class ServerThread extends Thread {
     private String loginBuffer;
     private boolean firstAESmsg = false;
     private String messageBuffer;
+    private final static String CHARSET  ="UTF-8";
+
 
     public ServerThread(Socket socket, PrivateKey privKey, String pathToClientKeyDir) { //, String analyticsBindingName, String billingBindingName) {
         super("ServerThread");
@@ -65,8 +68,8 @@ public class ServerThread extends Thread {
         //this.billingBindingName = billingBindingName;
 
         try {
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        	out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), CHARSET ), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), CHARSET));
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
             secureChannel.setPrivKey(myPrivKey);
 
@@ -179,7 +182,7 @@ public class ServerThread extends Thread {
 
         } catch (IOException e) {
             //System.out.println(e);
-            System.err.println("Problem with connection.");
+            //System.err.println("Problem with connection.");
         } catch (NullPointerException e) {
             //Client closed Connection
         } finally {

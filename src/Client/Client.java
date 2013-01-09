@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -49,6 +50,7 @@ public class Client {
     private static byte[] myChallenge, serverChallenge;
     private static String username;
     private static String messageBuffer;
+    private final static String CHARSET  ="UTF-8";
 
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
@@ -67,8 +69,9 @@ public class Client {
 
                 //TCP Connection
                 socket = new Socket(host, tcpPort);
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+               
+                out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), CHARSET ), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), CHARSET));
 
                 System.out.println("Active Socket Connection to Server!");
                 ok = true;
@@ -225,7 +228,9 @@ public class Client {
                     // reads the password from standard input for decrypting the private key
                     System.out.println("Enter pass phrase:");
                     try {
-                        return stdIn.readLine().toCharArray();
+                    	char[] pw = stdIn.readLine().toCharArray();
+                    	System.out.println(">in pw: " + pw.toString());
+                        return pw;
                     } catch (IOException ex) {
                         //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
                         return null;
@@ -238,7 +243,7 @@ public class Client {
         } catch (FileNotFoundException ex) {
             throw new KeyNotFoundException("No private key found. Login not possible.");
             //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
         KeyPair keyPair;
         try {
             keyPair = (KeyPair) pemIn.readObject();
