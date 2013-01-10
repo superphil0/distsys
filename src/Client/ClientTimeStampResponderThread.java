@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.PrivateKey;
 
-public class ClientTimeStampResponder extends Thread{
+public class ClientTimeStampResponderThread extends Thread{
 	ServerSocket socket;
 	private PrivateKey key;
 	private int port;
-	public ClientTimeStampResponder(int port,PrivateKey key)
+	public ClientTimeStampResponderThread(int port,PrivateKey key)
 	{
 		super("ClientTimeStampResponder");
 		this.port = port;
@@ -26,7 +26,7 @@ public class ClientTimeStampResponder extends Thread{
 		while(listening)
 		{
 			try {
-				TimeStampResponder resp = new TimeStampResponder(socket.accept(),key);
+				TimeStampResponder response = new TimeStampResponder(socket.accept(),key);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
