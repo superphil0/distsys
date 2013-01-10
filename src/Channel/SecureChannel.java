@@ -63,7 +63,6 @@ public class SecureChannel extends TCPChannel {
         try {
             cEncrypt = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding", "BC");
             cDecrypt = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding", "BC");
-            //System.out.println(">SecureChannel: Cipher algorithm found! ");
         } catch (NoSuchAlgorithmException ex) {
             System.err.println("RSA: No Such Algorithm.");
         } catch (NoSuchProviderException ex) {
@@ -74,23 +73,29 @@ public class SecureChannel extends TCPChannel {
     }
 
     public void send(String message) {
+    	//channel.send(message);
+    	
+    	//System.out.println(">sending: " + message);
+        //System.out.println("step 1 encrypt");
 
         if (!hasSessionKey) { //RSA pub encryption
 
             if (message.startsWith("!list")) { //no encryption
                 listCommand = true;
+                
                 channel.send(message);
                 return;
             } else if (listCommand || logoutResponse) {
                 logoutResponse = false;
                 listCommand = false;
                 channel.send(message);
+               
                 return;
             } else if (message.startsWith("!login") || message.startsWith("!ok")) { //1 or 2 part of handshake - encrypt with pub.key
                 //encrypt RSA
                 try {
-                    String encrypted = new String(cEncrypt.doFinal(message.getBytes()));
-                    //System.out.println(">encrypting: " + message);
+                    String encrypted = Base64.encode(cEncrypt.doFinal(message.getBytes()));
+                    //System.out.println(">encrypted: " + encrypted);
                     channel.send(encrypted);
                     return;
                 } catch (Exception ex) {
@@ -98,17 +103,20 @@ public class SecureChannel extends TCPChannel {
                 }
 
             } else { //nothing
-                System.out.println("Pleas login properly, otherwise only !list is a possilbe command.");
+                System.out.println("Please login properly, otherwise only !list is a possilbe command.");
                 return;
             }
 
         } else {
             try {
                 //AES encryption
-                String encryptedMessage = new String(aesCrypter.encryptAES(message.getBytes()));
+                byte[] encryptedMessage = aesCrypter.encryptAES(message.getBytes());
                 String hmac = generateMac(message);
-                String msg64 = Base64.encode(encryptedMessage.getBytes());
+                String msg64 = Base64.encode(encryptedMessage);
                 channel.send(msg64 + " " + hmac);
+                
+             	//System.out.println(">AESsending: " + msg64 + " " + hmac);
+                
                 return;
             } catch (HMacException ex) {
                 System.err.println("HMacEx: " + ex.getMessage());
@@ -121,8 +129,12 @@ public class SecureChannel extends TCPChannel {
     }
 
     public String receive() throws IOException {
+    	//return channel.receive();
 
         String message = channel.receive(); //incoming message, already base 64 decoded
+    	//System.out.println(">receiving: "+ message );
+        //System.out.println("step 3 decrypting");
+
 
         if (!hasSessionKey) { //RSA priv decryption
             if (message.startsWith("!list")) { //no encryption
@@ -136,9 +148,12 @@ public class SecureChannel extends TCPChannel {
                 listCommand = false;
                 try {
                     //has to be decrypted with priv key (!login from client oder !ok from server)
-                    String decrypted = new String(cDecrypt.doFinal(message.getBytes()));
+                	byte [] dec = cDecrypt.doFinal(Base64.decode(message));
+                    String decrypted = new String(dec);
+                    
                     return decrypted;
                 } catch (Exception ex) {
+                    Logger.getLogger(SecureChannel.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error while trying to decrypt Message...");
                 }
             }
@@ -152,6 +167,7 @@ public class SecureChannel extends TCPChannel {
                 String ghmac = generateMac(plainText);
                 //System.out.println("rhmac: " + rhmac);
                 //System.out.println("ghmac: " + ghmac);
+            	//System.out.println(">AESreceiving: "+ plainText );
 
                 if (rhmac.equals(ghmac)) {
                     resendCounter = 0;
@@ -178,7 +194,7 @@ public class SecureChannel extends TCPChannel {
         // return message;
         return "Something went wrong, sorry.";
 
-
+ 
     }
 
     /*
@@ -223,7 +239,7 @@ public class SecureChannel extends TCPChannel {
 
     public void setPubKey(PublicKey otherPubKey) {
         this.otherPubKey = otherPubKey;
-        //System.out.println(">SecureChannel: public key set!");
+       //System.out.println(">SecureChannel: public key set!");
         try {
             cEncrypt.init(Cipher.ENCRYPT_MODE, otherPubKey);
         } catch (InvalidKeyException ex) {

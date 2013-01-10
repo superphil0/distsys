@@ -34,11 +34,12 @@ public class Base64Channel extends TCPChannel {
      * @param message
      */
     public void send(String message) {
-       // System.out.println("step 2 b64");
-
+        //System.out.println("step 2 b64");
         byte[] byteMessage = string2Bytes(message);
         byte[] base64Message = encodeBase64(byteMessage);
         String msg = bytes2String(base64Message);
+        //System.out.println(">send b64: " + msg);
+
         channel.send(msg);
 
     }
@@ -54,7 +55,8 @@ public class Base64Channel extends TCPChannel {
         //System.out.println("step 2.1 receive b64");
 
         String msg = channel.receive();
-        //System.out.println("step 2.2 receive b64");
+        //System.out.println("step 2 receive b64");
+        //System.out.println(">receive b64: " + msg);
 
         byte[] base64Message = string2Bytes(msg);
         byte[] byteMessage = decodeBase64(base64Message);
