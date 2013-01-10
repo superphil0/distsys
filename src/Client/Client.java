@@ -149,7 +149,6 @@ public class Client {
                     System.out.println("Enter pass phrase:");
                     try {
                     	char[] pw = stdIn.readLine().toCharArray();
-                    	System.out.println(">in pw: " + pw.toString());
                         return pw;
                     } catch (IOException ex) {
                         //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -287,6 +286,7 @@ public class Client {
         return secureChannel;
     }
 
+    
     //Helpers
     public static byte[] string2Bytes(String message) {
         return message.getBytes();
