@@ -73,7 +73,7 @@ public class CommandProtocol implements GroupBidFinishedListener{
             } else if (strInput.startsWith("!login")) {
                 String[] args = strInput.split(" ");
                 //User Input must contain Username
-                if (args.length < 2 || args.length > 2) {
+                if (args.length != 3) {
                     strOutput = "Error: use following login command: !login <username>";
                 } else { //length is 2 - command + username
                     String username = args[1];
