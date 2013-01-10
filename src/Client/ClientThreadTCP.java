@@ -26,9 +26,11 @@ public class ClientThreadTCP extends Thread {
     private byte[] sentClientChallenge, receivedClientChallenge;
     private SecretKey sessionKey;
     private byte[] ivParam;
+	private Client client;
 
-    public ClientThreadTCP() {
+    public ClientThreadTCP(Client client) {
         secureChannel = clientCallback.getSecureChannel();
+        this.client = client;
     }
 
     @Override
@@ -68,6 +70,12 @@ public class ClientThreadTCP extends Thread {
                 } else if (fromServer.startsWith("!resending")) { //do nothing and wait for resending
                     //System.out.println("resending: " + Client.getMessageBuffer());
                     //secureChannel.send(Client.getMessageBuffer());
+                    
+                }  else if (fromServer.startsWith("!confirmed")) { 
+                	synchronized (client) {
+                		client.notifyAll();
+					}
+                	
                     
                 } else {
                     System.out.println(fromServer);

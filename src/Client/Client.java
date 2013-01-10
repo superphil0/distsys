@@ -24,8 +24,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.util.encoders.Base64;
@@ -52,6 +50,10 @@ public class Client {
     private static String messageBuffer;
     private final static String CHARSET  ="UTF-8";
 
+    public Client()
+    {
+    	object = new Object();
+    }
     public static void main(String[] args) throws IOException {
         //args should contain host, tcpPort, udpPort
 
@@ -107,93 +109,11 @@ public class Client {
             secureChannel = new SecureChannel(new Base64Channel(new TCPChannel(out, in)));
             secureChannel.setPubKey(serverPubKey);
             //ClientThreadTCP ctTCP = new ClientThreadTCP(in);
-            ClientThreadTCP ctTCP = new ClientThreadTCP();
-
-            ctTCP.start();
-
-            //User Input
-            stdIn = new BufferedReader(new InputStreamReader(System.in));
-            String fromUser;
-
-            try {
-
-                //receiving User-Commands until input is null --> shut down
-                boolean sendMsg = true;
-                while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
-                    sendMsg = true;
-                    if (fromUser.equals("")) {
-                        System.out.println("no input - please enter a command!");
-                        sendMsg = false;
-
-                    } else if (fromUser.equals("!end")) {
-                        break;//shut down
-
-                    } else {
-                        if (fromUser.startsWith("!login")) {
-                            //read Serv pub Key
-                            //get UserName, readPriv Key, require Password
-                            //create client challenge
-                            //base64 encode all parameters - decode am server how?!
-                            //
-                            if (fromUser.split(" ").length == 2 && !secureChannel.hasSessionKey()) {
-                                username = fromUser.split(" ")[1];
-                                try {
-                                    myPrivKey = getPrivateKey(username);
-                                    if (myPrivKey != null) {
-                                        secureChannel.setPrivKey(myPrivKey);
-
-                                        fromUser += " " + clientPort;
-
-                                        myChallenge = generateSecureRandom();
-                                        ctTCP.setClientChallenge(myChallenge);
-                                        byte[] rndNr64 = encodeBase64(myChallenge);
-                                        String challenge = bytes2String(rndNr64);
-                                        fromUser += " " + challenge;
-                                        secureChannel.setUsername(username);
-                                        secureChannel.setPath(pathToClientKeyDir);
-                                        sendMsg = true;
-                                    }
-                                } catch (KeyNotFoundException ex) {
-                                    System.out.println(ex.getMessage());
-                                    sendMsg = false;
-                                } catch (WrongPasswordException ex) {
-                                    System.out.println(ex.getMessage());
-                                    sendMsg = false;
-                                }
-                            } else {
-                                sendMsg = false;
-                                if (secureChannel.hasSessionKey()) {
-                                    System.out.println("User " + username + " already logged in.");
-                                } else {
-                                    System.out.println("Usage: !login <username>");
-                                }
-                            }
-
-                        }
-
-                        if (sendMsg) {
-                            //System.out.println(">sending: " + fromUser);
-                            secureChannel.send(fromUser);
-                            messageBuffer = fromUser;
-                            
-                            if (fromUser.startsWith("!logout")) {
-                                secureChannel.removeSessionKey();
-                                username = null;
-                            }
-                        }
-
-                    }
-
-                }
-
-            } catch (IOException e) {
-                System.err.println("I/O Fehler");
-            } finally {
-                close();
-            }
         } else {
             close();
         }
+        Client client = new Client();
+        client.startCommunication();
 
     }
 
@@ -229,6 +149,7 @@ public class Client {
                     System.out.println("Enter pass phrase:");
                     try {
                     	char[] pw = stdIn.readLine().toCharArray();
+                    	System.out.println(">in pw: " + pw.toString());
                         return pw;
                     } catch (IOException ex) {
                         //Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -255,6 +176,113 @@ public class Client {
 
     }
 
+	private boolean alive = true;
+	private Object object;
+    public void startCommunication()
+    {
+    	ClientThreadTCP ctTCP = new ClientThreadTCP(this);
+
+        ctTCP.start();
+
+        //User Input
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
+        String fromUser;
+
+        try {
+
+            //receiving User-Commands until input is null --> shut down
+            
+            boolean sendMsg = true;
+            while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+                sendMsg = true;
+                if (fromUser.equals("")) {
+                    System.out.println("no input - please enter a command!");
+                    sendMsg = false;
+
+                } else if (fromUser.equals("!end")) {
+                    break;//shut down
+
+                } else {
+                    if (fromUser.startsWith("!login")) {
+                        //read Serv pub Key
+                        //get UserName, readPriv Key, require Password
+                        //create client challenge
+                        //base64 encode all parameters - decode am server how?!
+                        //
+                        if (fromUser.split(" ").length == 2 && !secureChannel.hasSessionKey()) {
+                            username = fromUser.split(" ")[1];
+                            try {
+                                myPrivKey = getPrivateKey(username);
+                                if (myPrivKey != null) {
+                                    secureChannel.setPrivKey(myPrivKey);
+
+                                    fromUser += " " + clientPort;
+
+                                    myChallenge = generateSecureRandom();
+                                    ctTCP.setClientChallenge(myChallenge);
+                                    byte[] rndNr64 = encodeBase64(myChallenge);
+                                    String challenge = bytes2String(rndNr64);
+                                    fromUser += " " + challenge;
+                                    secureChannel.setUsername(username);
+                                    secureChannel.setPath(pathToClientKeyDir);
+                                    sendMsg = true;
+                                }
+                            } catch (KeyNotFoundException ex) {
+                                System.out.println(ex.getMessage());
+                                sendMsg = false;
+                            } catch (WrongPasswordException ex) {
+                                System.out.println(ex.getMessage());
+                                sendMsg = false;
+                            }
+                        } else {
+                            sendMsg = false;
+                            if (secureChannel.hasSessionKey()) {
+                                System.out.println("User " + username + " already logged in.");
+                            } else {
+                                System.out.println("Usage: !login <username>");
+                            }
+                        }
+
+                    }
+
+                    if (sendMsg) {
+                        //System.out.println(">sending: " + fromUser);
+                        secureChannel.send(fromUser);
+                        messageBuffer = fromUser;
+                        
+                        if (fromUser.startsWith("!logout")) {
+                            secureChannel.removeSessionKey();
+                            username = null;
+                        }
+                        else if(fromUser.startsWith("!confirm"))
+                        {                        	
+                        	synchronized (this) {															
+                        		try{
+                        			wait();
+                        		}
+								 catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+                        	
+                        	}                        	
+                        }
+                    }
+                }
+
+            }
+
+        } catch (IOException e) {
+            System.err.println("I/O Fehler");
+        } finally {
+            close();
+        }
+    }
+    
+    public void setAlive()
+    {
+    	this.alive = true;
+    }
     public static SecureChannel getSecureChannel() {
         return secureChannel;
     }

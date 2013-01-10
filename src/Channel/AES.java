@@ -9,8 +9,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -26,6 +24,7 @@ public class AES {
 
     private Cipher cEncrypt;
     private Cipher cDecrypt;
+    private HMac macGenerator;
 
     public AES(SecretKey secretKey, byte[] ivParam) throws AESException {
         try {
