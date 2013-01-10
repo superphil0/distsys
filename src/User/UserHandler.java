@@ -87,6 +87,7 @@ public class UserHandler {
     //TODO geht DS!!!
     /**
      * @param username to log in
+     * @param clientPort 
      * @return true for successful login, false for already logged in
      */
     /*
@@ -96,7 +97,7 @@ public class UserHandler {
      Logger.getLogger(CommandProtocol.class.getName()).log(Level.SEVERE, null, ex);
      }
      */
-    public Boolean login(String username, ServerThread serverThread) {
+    public Boolean login(String username, int clientPort, ServerThread serverThread) {
         //checks if the User already exists
         if (serverThread == null) {
             return false;
@@ -106,7 +107,7 @@ public class UserHandler {
             if (getUser(username).isLoggedIn()) {
                 return false;
             } else {
-                getUser(username).login(serverThread);
+                getUser(username).login(serverThread, clientPort);
 
                 try {
                     analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));

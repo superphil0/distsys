@@ -60,7 +60,14 @@ public class AuctionHandler {
     	{
     		if(b.equals(id, username, amount))
     		{
-    			return b.confirm(user, amount, id);
+    			if(user.getUsername().equals(username)) return false;
+    			
+    			boolean r =  b.confirm(user, amount, id);
+    			if(b.isConfirmed())
+    			{
+    				bid(b.getUser(),id,amount);
+    			}
+    			return r;
     		}
     	}
     	return false;
@@ -157,7 +164,7 @@ public class AuctionHandler {
                     Logger.getLogger(AuctionHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }catch (NullPointerException npe) {
                 //Logger.getLogger("No Connection to Analytics Server").log(Level.SEVERE, null, npe);
-            }
+                }
             }
             return bidResult;
         } else {

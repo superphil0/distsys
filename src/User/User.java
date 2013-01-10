@@ -21,6 +21,7 @@ public class User implements GroupBidFinishedListener{
     private int state = LOGGED_OUT;
     private String username;
     private ServerThread serverThread;
+    private int port;
     //outstanding udp notifications
     //List<String> notifications;
     
@@ -32,10 +33,12 @@ public class User implements GroupBidFinishedListener{
     
     /**
      * @param serverThread - current Thread which is communication with the client
+     * @param clientPort 
      */
-    public synchronized void login(ServerThread serverThread) {
+    public synchronized void login(ServerThread serverThread, int clientPort) {
             state = LOGGED_IN;
             this.serverThread = serverThread; 
+            this.port = clientPort;
     }
     
     public void logout() {
@@ -83,7 +86,7 @@ public class User implements GroupBidFinishedListener{
 	@Override
 	public String toString() {
 		Socket socket = serverThread.getSocket();
-		return socket.getInetAddress().getHostAddress() + ":"+socket.getPort() + " - " + username;
+		return socket.getInetAddress().getHostAddress() + ":"+port + " - " + username;
 	}
     /*private long getSessionTime() {
         return logoutTimestamp - loginTimestamp;

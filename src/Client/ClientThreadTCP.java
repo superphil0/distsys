@@ -71,12 +71,9 @@ public class ClientThreadTCP extends Thread {
                     //System.out.println("resending: " + Client.getMessageBuffer());
                     //secureChannel.send(Client.getMessageBuffer());
                     
-                }  else if (fromServer.startsWith("!confirmed")) { 
-                	synchronized (client) {
-                		client.notifyAll();
-					}
-                	
-                    
+                }  else if (fromServer.startsWith("!confirmed") || fromServer.startsWith("!rejected")) { 
+                   client.setAlive(); 
+                   System.out.println(fromServer);
                 } else {
                     System.out.println(fromServer);
                 }

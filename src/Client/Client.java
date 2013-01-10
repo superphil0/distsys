@@ -194,6 +194,7 @@ public class Client {
             
             boolean sendMsg = true;
             while ((fromUser = stdIn.readLine().trim()) != null) {// && !fromUser.isEmpty()) {
+            	if(!alive) continue;
                 sendMsg = true;
                 if (fromUser.equals("")) {
                     System.out.println("no input - please enter a command!");
@@ -255,17 +256,11 @@ public class Client {
                             username = null;
                         }
                         else if(fromUser.startsWith("!confirm"))
-                        {                        	
-                        	synchronized (this) {															
-                        		try{
-                        			wait();
-                        		}
-								 catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-                        	
-                        	}                        	
+                        {    
+                        	synchronized(object)
+                        	{
+                        	 alive = false;     
+                        	}
                         }
                     }
                 }
@@ -281,7 +276,10 @@ public class Client {
     
     public void setAlive()
     {
-    	this.alive = true;
+    	synchronized(object)
+    	{
+    		this.alive = true;
+    	}
     }
     public static SecureChannel getSecureChannel() {
         return secureChannel;

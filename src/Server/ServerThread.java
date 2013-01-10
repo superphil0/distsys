@@ -98,7 +98,7 @@ public class ServerThread extends Thread {
 
                 if (inputLine.startsWith("!login")) {
                     String[] input = inputLine.split(" ");
-                    loginBuffer = input[0] + " " + input[1]; //!login username
+                    loginBuffer = input[0] + " " + input[1] + " " +input[2]; //!login username
                     String username = input[1];
                     try {
                         //TODO set to secureChannel
@@ -106,11 +106,7 @@ public class ServerThread extends Thread {
                         secureChannel.setPubKey(clientPubKey);
 
 
-                        try {
-                            clientPort = Integer.parseInt(input[2]);
-                        } catch (NumberFormatException nfe) {
-                            System.err.println("PortNumber has to be a number! E.g. Server <Port>");
-                        }
+                        
 
 
                         outputLine = "!ok " + input[3]; // + other stuff

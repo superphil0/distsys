@@ -77,7 +77,14 @@ public class CommandProtocol implements GroupBidFinishedListener{
                     strOutput = "Error: use following login command: !login <username>";
                 } else { //length is 2 - command + username
                     String username = args[1];
-                    if (userHandler.login(username, serverThread)) {
+                    int clientPort;
+                    try {
+                            clientPort = Integer.parseInt(args[2]);
+                        } catch (NumberFormatException nfe) {
+                            System.err.println("PortNumber has to be a number! E.g. Server <Port>");
+                        }
+                        
+                    if (userHandler.login(username, clientPort, serverThread)) {
                         if (serverThread == null) {
                             strOutput = "An Error occured, no udp connection to Client.";
                             return strOutput;
@@ -142,7 +149,7 @@ public class CommandProtocol implements GroupBidFinishedListener{
 
                 }
             } 
-            else if (strInput.startsWith("!getClientList")) {
+            else if (strInput.equals("!getClientList")) {
             	strOutput = userHandler.getUserList();
             	
             }
@@ -232,7 +239,7 @@ public class CommandProtocol implements GroupBidFinishedListener{
            			
                    if(auctionHandler.confirm(amount, id, username, currentUser))
                    {
-                	   strOutput = "!confirmed";
+                	   strOutput = "Your confirmation was accepted";
                    }
                    else
                 	   strOutput = "!rejected couldnt find that bid";
