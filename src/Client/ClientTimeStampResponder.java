@@ -22,7 +22,7 @@ public class ClientTimeStampResponder extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		boolean listening;
+		boolean listening = true;
 		while(listening)
 		{
 			try {

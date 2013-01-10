@@ -123,7 +123,7 @@ public class UserHandler {
             //new User
         } else {
             allUsers.put(username, new User(username));
-            getUser(username).login(serverThread);
+            getUser(username).login(serverThread, clientPort);
 
             try {
                 analyticsService.processEvent(new UserEvent("USER_LOGIN", new Date().getTime(), username));

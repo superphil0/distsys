@@ -77,7 +77,7 @@ public class CommandProtocol implements GroupBidFinishedListener{
                     strOutput = "Error: use following login command: !login <username>";
                 } else { //length is 2 - command + username
                     String username = args[1];
-                    int clientPort;
+                    int clientPort = 0;
                     try {
                             clientPort = Integer.parseInt(args[2]);
                         } catch (NumberFormatException nfe) {
