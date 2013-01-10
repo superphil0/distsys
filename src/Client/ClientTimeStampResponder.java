@@ -26,7 +26,7 @@ public class ClientTimeStampResponder extends Thread{
 		while(listening)
 		{
 			try {
-				TimeStampResponder resp = new TimeStampResponder(socket.accept(),key);
+				TimeStampResponder response = new TimeStampResponder(socket.accept(),key);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
