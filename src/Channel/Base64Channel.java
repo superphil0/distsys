@@ -34,7 +34,7 @@ public class Base64Channel extends TCPChannel {
      * @param message
      */
     public void send(String message) {
-    	//System.out.println("step 2 b64");
+        //System.out.println("step 2 b64");
         byte[] byteMessage = string2Bytes(message);
         byte[] base64Message = encodeBase64(byteMessage);
         String msg = bytes2String(base64Message);
