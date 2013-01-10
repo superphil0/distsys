@@ -88,6 +88,14 @@ public class User implements GroupBidFinishedListener{
 		Socket socket = serverThread.getSocket();
 		return socket.getInetAddress().getHostAddress() + ":"+port + " - " + username;
 	}
+        
+        public Socket getSocket() {
+            return serverThread.getSocket();
+        }
+        
+        public int getPort() {
+            return port;
+        }
     /*private long getSessionTime() {
         return logoutTimestamp - loginTimestamp;
     }*/
